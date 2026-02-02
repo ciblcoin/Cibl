@@ -1,0 +1,29 @@
+{
+  "name": "cibl-wallet",
+  "version": "1.0.0",
+  "description": "Multi-chain Web3 Wallet with GambleFi Social Features",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@mysten/sui.js": "^0.51.0",
+    "@solana/web3.js": "^1.89.0",
+    "@supabase/supabase-js": "^2.39.7",
+    "ethers": "^6.11.1",
+    "nativewind": "^2.0.11",
+    "tailwindcss": "^3.3.2",
+    "lucide-react-native": "^0.344.0",
+    "react-native-wagmi-charts": "^2.3.0",
+    "expo-local-authentication": "~13.8.0",
+    "react-native-reanimated": "~3.6.2",
+    "react-native-gesture-handler": "~2.14.0",
+    "bip39": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  }
+}
