@@ -22,6 +22,7 @@ CiBL-Wallet is a high-performance, non-custodial cryptocurrency wallet designed 
 * **Interactive Charts:** Real-time line charts with multiple timeframes (1H, 1D, 1W, 1M, ALL).
 * **Instant Swap:** Aggregated liquidity for the best prices with a flat 0.6% fee.
 
+
 ---
 
 ## 📂 Project Structure
@@ -111,3 +112,61 @@ cibl-wallet/
 ├── package.json              # Project Dependencies
 ├── tailwind.config.js        # Global Theme Config
 └── .env                      # Environment Variables
+
+
+
+
+
+
+
+
+
+
+
+
+🛠️ Tech Stack
+​Framework: React Native (Expo)
+​Styling: NativeWind (Tailwind CSS)
+​Database/Backend: Supabase (User Profiles & Referrals)
+​Smart Logic: Cloudflare Workers (GameFi Arbitrator)
+​Charts: Wagmi Charts (High-performance SVG)
+​🚀 Quick Start
+​1. Installation
+# Clone the repository
+git clone [https://github.com/your-username/cibl.git](https://github.com/your-username/cibl.git)
+
+# Install dependencies
+npm install
+
+
+2. Configuration
+Create a .env file in the root directory and add your keys:
+
+SOLANA_RPC=your_rpc_link
+BSC_RPC=your_rpc_link
+SUPABASE_URL=your_project_url
+SUPABASE_ANON_KEY=your_key
+
+3. Run the App
+
+npx expo start
+
+🛣️ Roadmap 2026
+[x] Multi-Chain Wallet Core (BTC, SOL, ETH, SUI, TON)
+[x] Token Security Scanner
+[x] Real-time Price Alerts
+[ ] Cross-chain Bridge Integration
+[ ] Hardware Wallet Bluetooth Support (Ledger/Trezor)
+📄 License
+Distributed under the MIT License. See LICENSE for more information.
+Built for the future of decentralized finance. Join the CiBL ecosystem.
+
+
+
+
+
+
+### What's next?
+Your repository structure and documentation are now complete and professional. 
+
+**Would you like me to help you write the `App.js` entry point?** This file will tie the navigation and theme together so you can launch the app and see the Onboarding screen for the first time.
