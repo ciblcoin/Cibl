@@ -86,3 +86,28 @@ cibl-wallet/
 ├── App.js                  # Entry Point
 ├── package.json            # Dependencies
 └── tailwind.config.js      # Global Theme
+
+
+
+
+
+
+
+
+
+
+cibl-wallet/
+├── src/
+│   ├── blockchain/
+│   │   ├── engines/          # Multi-chain logic (Solana, EVM, Sui, etc.)
+│   │   └── security/         # Security Scanner & Honeypot Checker
+│   ├── components/           # UI Components (Charts, Buttons, Cards)
+│   ├── navigation/           # App Routing (Auth & Main Stack)
+│   ├── screens/              # Full Pages (Dashboard, Token Detail, Swap)
+│   ├── services/             # Supabase, Firebase, API Config
+│   ├── store/                # State Management (Wallet & Price Data)
+│   └── utils/                # Encryption & Formatters
+├── App.js                    # Entry Point
+├── package.json              # Project Dependencies
+├── tailwind.config.js        # Global Theme Config
+└── .env                      # Environment Variables
