@@ -1,4 +1,41 @@
 
+# 🚀 CiBL-Wallet (GambleFi & Trading)
+
+CiBL-Wallet is a next-generation Web3 mobile wallet designed for high-frequency traders and GambleFi enthusiasts. Built with **React Native** and **Expo**, it combines high-speed swap functionality with social engagement and 1-minute trading challenges.
+
+## ✨ Key Features
+
+- **Multi-Chain Swap:** Seamlessly swap tokens with a 0.6% integrated fee model.
+- **GambleFi Hub:** Real-time chat rooms with "Duel" functionality for 1-minute price prediction challenges.
+- **Bank-Grade Security:** Biometric authentication (FaceID/Fingerprint) and AES-256 encrypted local storage for private keys.
+- **Smart Scanner:** Integrated Honeypot and Liquidity scanner to protect users from high-risk tokens.
+- **Referral System:** Built-in passive income engine via Supabase.
+
+## 🛠 Tech Stack
+
+- **Frontend:** React Native (Expo)
+- **Styling:** TailwindCSS (NativeWind)
+- **Backend/DB:** Supabase (PostgreSQL & Real-time)
+- **Blockchain Engines:** Jupiter API (Solana) & 1inch API (EVM)
+- **Icons:** Lucide React Native
+
+## 📁 Repository Structure
+
+```text
+├── assets/             # Fonts, Brand Logos, Splash Screens
+├── src/
+│   ├── blockchain/    # Price Engine & Wallet Management
+│   ├── screens/       # Dashboard, Swap, Chat, Settings
+│   ├── services/      # Supabase, Notifications, Security Scanner
+│   └── utils/         # Formatters & Constants
+├── App.js             # Navigation & App Logic
+└── tailwind.config.js # Custom Neon Branding
+
+
+
+
+
+
 # 🚀 CiBL-Wallet: Next-Gen Multi-Chain & GambleFi Wallet
 
 CiBL-Wallet is a high-performance, non-custodial cryptocurrency wallet designed for the modern era of Web3. It combines professional trading tools with social **GambleFi** features, allowing users to trade, chat, and challenge friends across multiple blockchains including Solana, EVM (BSC/Base), TON, and SUI.
