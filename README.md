@@ -123,6 +123,28 @@ cibl-wallet/
 
 
 
+assets/
+├── fonts/                 # فونت‌های اختصاصی برای نمایش اعداد و متون
+│   ├── Inter-Bold.ttf
+│   ├── Inter-Regular.ttf
+│   └── SpaceMono-Regular.ttf
+├── icons/                 # فقط آیکون‌های غیرسیستمی و برندینگ
+│   ├── app-icon.png       # آیکون اصلی اپلیکیشن (1024x1024)
+│   ├── btc-logo.png       # لوگوی شبکه‌ها (چون در لوسید نیستند)
+│   ├── eth-logo.png
+│   ├── sol-logo.png
+│   ├── bsc-logo.png
+│   └── sui-logo.png
+└── splash/                # فایل‌های مربوط به صفحه لودینگ اولیه
+    ├── splash-icon.png    # لوگوی وسط صفحه اسپلش
+    └── adaptive-icon.png  # آیکون تطبیق‌پذیر برای اندروید
+
+
+
+
+
+
+
 
 🛠️ Tech Stack
 ​Framework: React Native (Expo)
