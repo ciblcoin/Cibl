@@ -1,0 +1,108 @@
+-- ============================================
+-- CiBL Wallet - Decentralized SQL Reset Script
+-- ============================================
+
+SET session_replication_role = 'replica';
+
+-- 1. پاکسازی ساختار قبلی
+DROP TABLE IF EXISTS public.chat_messages CASCADE;
+DROP TABLE IF EXISTS public.challenges CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+
+-- 2. جدول پروفایل‌ها (کاملاً بر پایه کیف پول)
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    solana_address VARCHAR(44) NOT NULL UNIQUE,
+    evm_address VARCHAR(42), -- اضافه شده برای مولتی‌چین
+    ton_address TEXT,        -- اضافه شده برای مولتی‌چین
+    
+    -- نام کاربری: اگر کاربر دستی تغییر ندهد، مقدار پیش‌فرض توسط تریگر پر می‌شود
+    username VARCHAR(50) UNIQUE,
+    
+    display_name VARCHAR(50), -- نامی که کاربر به دلخواه انتخاب می‌کند
+    avatar_url TEXT,
+    
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- 3. جدول چالش‌ها (بدون تغییر در منطق، فقط هماهنگی با پروفایل جدید)
+CREATE TABLE public.challenges (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    creator_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    acceptor_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'open' 
+        CHECK (status IN ('open', 'active', 'completed', 'expired', 'cancelled')),
+    amount_usd DECIMAL(10, 2) NOT NULL DEFAULT 5,
+    asset_pair VARCHAR(20) NOT NULL DEFAULT 'SOL/USDC',
+    entry_price DECIMAL(20, 8),
+    winner_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    started_at TIMESTAMPTZ
+);
+
+-- 4. جدول چت (با محدودیت ۳۰۰ کاراکتر)
+CREATE TABLE public.chat_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    challenge_id UUID REFERENCES public.challenges(id) ON DELETE SET NULL,
+    message VARCHAR(300) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- ------------------------------------------------------------
+-- 5. تریگر هوشمند برای تولید نام کاربری خودکار
+-- ------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.handle_new_user_profile()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- استخراج آدرس کیف پول از Metadata کاربر (که هنگام ثبت‌نام ارسال شده)
+  -- فرض بر این است که آدرس در raw_user_meta_data قرار دارد
+  NEW.solana_address := NEW.raw_user_meta_data->>'solana_address';
+  
+  -- تولید نام کاربری خودکار: CiBL_ + 4 رقم اول آدرس + 4 رقم آخر آدرس
+  -- مثال: CiBL_Ab12...89Xy
+  IF NEW.username IS NULL THEN
+    NEW.username := 'CiBL_' || 
+                    substring(NEW.raw_user_meta_data->>'solana_address', 1, 4) || 
+                    '...' || 
+                    substring(NEW.raw_user_meta_data->>'solana_address', length(NEW.raw_user_meta_data->>'solana_address') - 3);
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ------------------------------------------------------------
+-- 6. توابع کمکی برای فرانت‌اِند
+-- ------------------------------------------------------------
+
+-- تابع برای دریافت پروفایل بر اساس آدرس کوتاه شده
+CREATE OR REPLACE FUNCTION get_profile_by_wallet(wallet_addr TEXT)
+RETURNS SETOF public.profiles AS $$
+  SELECT * FROM public.profiles WHERE solana_address = wallet_addr;
+$$ LANGUAGE sql STABLE;
+
+-- ------------------------------------------------------------
+-- 7. امنیت (RLS)
+-- ------------------------------------------------------------
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.challenges ENABLE ROW LEVEL SECURITY;
+
+-- همه می‌توانند پروفایل‌ها را ببینند (برای نمایش نام در چت)
+CREATE POLICY "Public Profiles Access" ON public.profiles FOR SELECT USING (true);
+
+-- فقط خود کاربر می‌تواند نام کاربری خود را تغییر دهد
+CREATE POLICY "User Update Own Profile" ON public.profiles FOR UPDATE 
+USING (auth.uid() = id);
+
+-- چت: همه می‌بینند، کاربران لاگین شده پیام می‌دهند
+CREATE POLICY "Chat Viewable" ON public.chat_messages FOR SELECT USING (true);
+CREATE POLICY "Authenticated Chat" ON public.chat_messages FOR INSERT 
+WITH CHECK (auth.uid() = user_id);
+
+-- ------------------------------------------------------------
+-- 8. اتمام عملیات
+-- ------------------------------------------------------------
+SET session_replication_role = 'origin';
