@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "CiBL Wallet",
+    "slug": "cibl-wallet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/app-icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0E17"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cibl.wallet"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/splash/adaptive-icon.png",
+        "backgroundColor": "#0A0E17"
+      },
+      "package": "com.cibl.wallet"
+    }
+  }
+}
