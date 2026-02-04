@@ -36,6 +36,19 @@ CiBL-Wallet is a next-generation Web3 mobile wallet designed for high-frequency 
 
 
 
+assets/
+├── fonts/               # فونت‌های سفارشی پروژه
+├── icons/               # آیکون‌های اختصاصی اپلیکیشن
+├── images/              # تصاویر و گرافیک‌های داخل برنامه
+├── lottie/              # انیمیشن‌های متحرک (سبک و جذاب)
+└── splash/              # فایل‌های مربوط به صفحه خوش‌آمدگویی (Splash Screen)
+
+
+
+
+
+
+
 # 🚀 CiBL-Wallet: Next-Gen Multi-Chain & GambleFi Wallet
 
 CiBL-Wallet is a high-performance, non-custodial cryptocurrency wallet designed for the modern era of Web3. It combines professional trading tools with social **GambleFi** features, allowing users to trade, chat, and challenge friends across multiple blockchains including Solana, EVM (BSC/Base), TON, and SUI.
