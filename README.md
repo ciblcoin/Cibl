@@ -313,3 +313,18 @@ Built for the future of decentralized finance. Join the CiBL ecosystem.
 Your repository structure and documentation are now complete and professional. 
 
 **Would you like me to help you write the `App.js` entry point?** This file will tie the navigation and theme together so you can launch the app and see the Onboarding screen for the first time.
+
+
+
+
+
+
+
+
+Network Fee Collector Key RPC Variable Swap API
+Bitcoin BTC_FEE_ADDR BTC_RPC_URL N/A (Bridge needed)
+Solana SOL_FEE_ADDR SOL_RPC_URL Jupiter API
+BSC BSC_FEE_ADDR BSC_RPC_URL 1inch / Pancake
+SUI SUI_FEE_ADDR SUI_RPC_URL Cetus / Aftermath
+TON TON_FEE_ADDR TON_RPC_URL Ston.fi / DeDust
+EVMs EVM_FEE_ADDR BASE/POLY/ARB_RPC
