@@ -22,6 +22,51 @@ CiBL-Wallet is a next-generation Web3 mobile wallet designed for high-frequency 
 ## 📁 Repository Structure
 
 ```text
+
+
+CiBL-Wallet/
+├── anchor/                        # Solana Smart Contracts (Rust)
+│   ├── programs/
+│   │   └── trading_challenge/     # Escrow & Challenge Logic
+│   ├── Anchor.toml                # [EXISTING] Moved to subfolder
+│   └── Cargo.toml                 # [EXISTING] Moved to subfolder
+│
+├── cloudflare-worker/             # Backend Logic & RPC Proxy
+│   ├── src/
+│   │   └── index.js               # Settlement & Cron Jobs
+│   └── wrangler.toml              # [EXISTING] Cloudflare configuration
+│
+├── src/                           # Mobile Core (React Native) & Shared Logic
+│   ├── api/                       # Supabase & Price Feeds
+│   ├── blockchain/                # Multi-chain (Solana & EVM) logic
+│   ├── components/                # [EXISTING] Shared UI Components
+│   ├── hooks/                     # [EXISTING] Custom React Hooks
+│   ├── lib/                       # [EXISTING] Core libraries & logic
+│   ├── utils/                     # [EXISTING] Helper functions
+│   ├── constants.js               # [EXISTING] Global constants
+│   └── App.js                     # Root entry for Mobile
+│
+├── web/                           # [NEW] Web Platform (Next.js)
+│   ├── app/                       # [EXISTING] Next.js App Router
+│   ├── public/                    # [EXISTING] Assets, Icons, Tokens
+│   ├── next.config.js             # [EXISTING] Web configuration
+│   ├── postcss.config.js          # [EXISTING] Styling
+│   ├── tailwind.config.js         # [EXISTING] Styling
+│   └── open-next.config.ts        # [EXISTING] Deployment
+│
+├── scripts/                       # [EXISTING] Deployment & automation scripts
+├── supabase/                      # Database Schema & Migrations
+│   └── SQLsupabase.text           # [EXISTING] Your SQL initialization
+│
+├── .env                           # Sensitive keys (DO NOT COMMIT)
+├── .env.example                   # [EXISTING] Environment template
+├── .gitignore                     # [EXISTING] Git ignore rules
+├── jsconfig.json                  # [EXISTING] Path aliases
+├── package.json                   # [EXISTING] Project dependencies
+├── package-lock.json              # [EXISTING]
+└── README.md                      # [EXISTING] Project Documentation
+
+
 ├── assets/             # Fonts, Brand Logos, Splash Screens
 ├── src/
 │   ├── blockchain/    # Price Engine & Wallet Management
@@ -30,6 +75,9 @@ CiBL-Wallet is a next-generation Web3 mobile wallet designed for high-frequency 
 │   └── utils/         # Formatters & Constants
 ├── App.js             # Navigation & App Logic
 └── tailwind.config.js # Custom Neon Branding
+
+
+
 
 
 
