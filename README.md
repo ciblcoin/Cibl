@@ -95,6 +95,23 @@ src/
 
 
 
+cibl-wallet/
+├── src/
+│   ├── blockchain/          # منطق بلاکچین‌ها
+│   │   ├── solana/          # Jupiter, Anchor
+│   │   ├── evm/             # BSC, Base, Poly (Ethers.js)
+│   │   ├── ton/             # Ston.fi, TonConnect
+│   │   ├── sui/             # Mysten SDK
+│   │   └── security/        # [NEW] Token Scanner
+│   ├── components/          # رابط کاربری
+│   │   ├── Chat/            # Slideout چت
+│   │   ├── Challenge/       # سیستم نبردهای ۵ دلاری
+│   │   ├── Swap/            # مولتی‌چین سوآپ
+│   │   └── Browser/         # مرورگر dApp
+│   └── lib/
+│       └── supabase/        # دیتابیس و سیستم Referral
+├── workers/                 # Cloudflare Workers (داوری چالش‌ها)
+└── .env                     # کلیدهای ادمین و RPCها
 
 
 
