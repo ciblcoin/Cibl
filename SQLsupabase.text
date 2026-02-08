@@ -1,131 +1,170 @@
 -- ============================================
--- CiBL Wallet - Decentralized SQL Reset Script
+-- CiBL WALLET - UNIFIED MASTER SCHEMA (2026)
+-- Integration: Wallet + Challenges + Chat + Multi-Chain + Referrals
 -- ============================================
 
+-- 0. INITIAL SETUP
 SET session_replication_role = 'replica';
 
--- 1. پاکسازی ساختار قبلی
+-- 1. CLEANUP (Dependency Order)
+DROP TABLE IF EXISTS public.referral_earnings CASCADE;
+DROP TABLE IF EXISTS public.challenge_participants CASCADE;
 DROP TABLE IF EXISTS public.chat_messages CASCADE;
 DROP TABLE IF EXISTS public.challenges CASCADE;
+DROP TABLE IF EXISTS public.fee_logs CASCADE;
 DROP TABLE IF EXISTS public.profiles CASCADE;
 
--- 2. جدول پروفایل‌ها (کاملاً بر پایه کیف پول)
+-- 2. PRIMARY TABLES
+
+-- A. PROFILES (The identity core)
 CREATE TABLE public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     solana_address VARCHAR(44) NOT NULL UNIQUE,
-    evm_address VARCHAR(42), -- اضافه شده برای مولتی‌چین
-    ton_address TEXT,        -- اضافه شده برای مولتی‌چین
+    evm_address VARCHAR(42) UNIQUE,
+    btc_address TEXT UNIQUE,
     
-    -- نام کاربری: اگر کاربر دستی تغییر ندهد، مقدار پیش‌فرض توسط تریگر پر می‌شود
     username VARCHAR(50) UNIQUE,
-    
-    display_name VARCHAR(50), -- نامی که کاربر به دلخواه انتخاب می‌کند
+    display_name VARCHAR(50),
     avatar_url TEXT,
+    
+    -- Referral System Columns
+    referral_code VARCHAR(15) UNIQUE,
+    referred_by UUID REFERENCES public.profiles(id),
+    total_volume_usd DECIMAL(20, 8) DEFAULT 0, -- Track user volume for loyalty
     
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- 3. جدول چالش‌ها (بدون تغییر در منطق، فقط هماهنگی با پروفایل جدید)
+-- B. CHALLENGES (The 1-on-1 or Group Duels)
 CREATE TABLE public.challenges (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     creator_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     acceptor_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'open' 
         CHECK (status IN ('open', 'active', 'completed', 'expired', 'cancelled')),
-    amount_usd DECIMAL(10, 2) NOT NULL DEFAULT 5,
+    
+    amount_usd DECIMAL(12, 2) NOT NULL DEFAULT 5,
     asset_pair VARCHAR(20) NOT NULL DEFAULT 'SOL/USDC',
-    entry_price DECIMAL(20, 8),
+    entry_price DECIMAL(24, 10),
+    exit_price DECIMAL(24, 10),
+    
     winner_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    started_at TIMESTAMPTZ
+    started_at TIMESTAMPTZ,
+    expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '10 minutes')
 );
 
--- 4. جدول چت (با محدودیت ۳۰۰ کاراکتر)
+-- C. CHAT MESSAGES
 CREATE TABLE public.chat_messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     challenge_id UUID REFERENCES public.challenges(id) ON DELETE SET NULL,
     message VARCHAR(300) NOT NULL,
+    message_type VARCHAR(20) DEFAULT 'text', -- 'text', 'system_alert'
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- ------------------------------------------------------------
--- 5. تریگر هوشمند برای تولید نام کاربری خودکار
--- ------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.handle_new_user_profile()
+-- D. FEE & TRANSACTION LOGS (Triggering Referral Rewards)
+CREATE TABLE public.fee_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_address VARCHAR(44) NOT NULL,
+    amount_usd DECIMAL(20, 8) NOT NULL, -- Total transaction volume
+    fee_collected DECIMAL(20, 8) NOT NULL, -- The cut CiBL took (e.g. 0.8%)
+    tx_type TEXT, -- 'SWAP', 'DUEL_FEE'
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- E. REFERRAL EARNINGS (The Rewards Table)
+CREATE TABLE public.referral_earnings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    referrer_id UUID REFERENCES public.profiles(id),
+    referee_id UUID REFERENCES public.profiles(id),
+    amount_earned_usd DECIMAL(20, 8) NOT NULL,
+    is_paid BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- 3. AUTOMATION & LOGIC (FUNCTIONS)
+
+-- I. Auto-generate Referral Code
+CREATE OR REPLACE FUNCTION generate_cibl_ref_code() 
+RETURNS TEXT AS $$
+BEGIN
+  RETURN 'CIBL-' || UPPER(SUBSTR(MD5(RANDOM()::TEXT), 1, 6));
+END;
+$$ LANGUAGE plpgsql;
+
+-- II. Profile Creation Trigger Logic
+CREATE OR REPLACE FUNCTION public.handle_new_user_setup()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- استخراج آدرس کیف پول از Metadata کاربر (که هنگام ثبت‌نام ارسال شده)
-  -- فرض بر این است که آدرس در raw_user_meta_data قرار دارد
+  -- Set Solana Address from Metadata
   NEW.solana_address := NEW.raw_user_meta_data->>'solana_address';
   
-  -- تولید نام کاربری خودکار: CiBL_ + 4 رقم اول آدرس + 4 رقم آخر آدرس
-  -- مثال: CiBL_Ab12...89Xy
+  -- Generate Username if missing
   IF NEW.username IS NULL THEN
-    NEW.username := 'CiBL_' || 
-                    substring(NEW.raw_user_meta_data->>'solana_address', 1, 4) || 
-                    '...' || 
-                    substring(NEW.raw_user_meta_data->>'solana_address', length(NEW.raw_user_meta_data->>'solana_address') - 3);
+    NEW.username := 'CiBL_' || SUBSTRING(NEW.solana_address, 1, 4) || '...' || SUBSTRING(NEW.solana_address, 41);
   END IF;
-  
+
+  -- Assign Unique Referral Code
+  NEW.referral_code := generate_cibl_ref_code();
+
+  -- Process "Invite Link" if available
+  -- Metadata should contain 'inviter_id' if user clicked a ref link
+  NEW.referred_by := (NEW.raw_user_meta_data->>'inviter_id')::UUID;
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- ------------------------------------------------------------
--- 6. توابع کمکی برای فرانت‌اِند
--- ------------------------------------------------------------
-
--- تابع برای دریافت پروفایل بر اساس آدرس کوتاه شده
-CREATE OR REPLACE FUNCTION get_profile_by_wallet(wallet_addr TEXT)
-RETURNS SETOF public.profiles AS $$
-  SELECT * FROM public.profiles WHERE solana_address = wallet_addr;
-$$ LANGUAGE sql STABLE;
-
--- ------------------------------------------------------------
--- 7. امنیت (RLS)
--- ------------------------------------------------------------
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.challenges ENABLE ROW LEVEL SECURITY;
-
--- همه می‌توانند پروفایل‌ها را ببینند (برای نمایش نام در چت)
-CREATE POLICY "Public Profiles Access" ON public.profiles FOR SELECT USING (true);
-
--- فقط خود کاربر می‌تواند نام کاربری خود را تغییر دهد
-CREATE POLICY "User Update Own Profile" ON public.profiles FOR UPDATE 
-USING (auth.uid() = id);
-
--- چت: همه می‌بینند، کاربران لاگین شده پیام می‌دهند
-CREATE POLICY "Chat Viewable" ON public.chat_messages FOR SELECT USING (true);
-CREATE POLICY "Authenticated Chat" ON public.chat_messages FOR INSERT 
-WITH CHECK (auth.uid() = user_id);
-
--- ------------------------------------------------------------
--- 8. اتمام عملیات
--- ------------------------------------------------------------
-SET session_replication_role = 'origin';
-
-
-
-
--- اضافه کردن ستون‌های معرف به جدول profiles
-ALTER TABLE public.profiles 
-ADD COLUMN referral_code VARCHAR(10) UNIQUE,
-ADD COLUMN referred_by UUID REFERENCES public.profiles(id);
-
--- تابعی برای تولید کد تصادفی (مثلاً CIBL-K3J9)
-CREATE OR REPLACE FUNCTION generate_referral_code() 
-RETURNS TEXT AS $$
+-- III. Automated Referral Payout Logic (0.2% Share)
+CREATE OR REPLACE FUNCTION public.process_referral_payout()
+RETURNS TRIGGER AS $$
 DECLARE
-  chars TEXT := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  result TEXT := 'CIBL-';
-  i INTEGER := 0;
+    v_referrer_id UUID;
+    v_reward DECIMAL;
 BEGIN
-  FOR i IN 1..4 LOOP
-    result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
-  END LOOP;
-  RETURN result;
+    -- Find if the transacting user was referred by someone
+    SELECT referred_by INTO v_referrer_id FROM public.profiles WHERE solana_address = NEW.user_address;
+
+    IF v_referrer_id IS NOT NULL THEN
+        -- Calculate 0.2% of the volume as reward
+        v_reward := NEW.amount_usd * 0.002;
+
+        INSERT INTO public.referral_earnings (referrer_id, referee_id, amount_earned_usd)
+        VALUES (v_referrer_id, (SELECT id FROM public.profiles WHERE solana_address = NEW.user_address), v_reward);
+    END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- 4. APPLY TRIGGERS
+CREATE TRIGGER on_auth_user_created_setup
+    BEFORE INSERT ON public.profiles
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user_setup();
+
+CREATE TRIGGER on_fee_logged_payout
+    AFTER INSERT ON public.fee_logs
+    FOR EACH ROW EXECUTE FUNCTION public.process_referral_payout();
+
+-- 5. SECURITY (RLS)
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.challenges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.referral_earnings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public profiles are readable" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update own data" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Chat is public" ON public.chat_messages FOR SELECT USING (true);
+CREATE POLICY "Auth users can chat" ON public.chat_messages FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Referral data private" ON public.referral_earnings FOR SELECT USING (auth.uid() = referrer_id);
+
+-- 6. INDEXES FOR SPEED
+CREATE INDEX idx_prof_sol ON public.profiles(solana_address);
+CREATE INDEX idx_ref_code ON public.profiles(referral_code);
+CREATE INDEX idx_chat_time ON public.chat_messages(created_at DESC);
+
+SET session_replication_role = 'origin';
+
+-- DONE
