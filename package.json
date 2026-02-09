@@ -1,3 +1,62 @@
+
+{
+  "name": "cibl-secure-wallet",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios"
+  },
+  "dependencies": {
+    "expo": "~50.0.0",
+    "expo-secure-store": "~12.8.1",
+    "expo-crypto": "~12.8.0",
+    
+    /* موتورهای اصلی کیف پول (Crypto Cores) */
+    "bip39": "^3.1.0",
+    "ed25519-hd-key": "^1.3.0",
+    "buffer": "^6.0.3",
+    "readable-stream": "^4.5.2",
+    "base64-js": "^1.5.1",
+
+    /* شبکه سولانا و ژوپیتر */
+    "@solana/web3.js": "^1.89.1",
+    "@jup-ag/api": "^6.0.0",
+
+    /* شبکه اتریوم، BSC، Polygon و غیره */
+    "ethers": "^6.9.0",
+
+    /* شبکه بیت‌کوین */
+    "bitcoinjs-lib": "^6.1.5",
+    "ecpair": "^2.1.0",
+    "tiny-secp256k1": "^2.2.3",
+
+    /* لایه امنیت و دیتابیس */
+    "@supabase/supabase-js": "^2.39.0",
+    "react-native-aes-crypto": "^2.1.1",
+    
+    /* رابط کاربری حرفه‌ای */
+    "nativewind": "^2.0.11",
+    "lucide-react-native": "^0.294.0",
+    "react-native-svg": "14.1.0",
+    "react-native-wagmi-charts": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "react-native-dotenv": "^3.4.9",
+    "tailwindcss": "3.3.2"
+  }
+}
+
+
+
+
+
+
+====================================
+
+
 {
   "name": "cibl-wallet",
   "version": "1.0.0",
