@@ -168,3 +168,27 @@ CREATE INDEX idx_chat_time ON public.chat_messages(created_at DESC);
 SET session_replication_role = 'origin';
 
 -- DONE
+
+
+
+
+
+
+-- ۱. نمای کلی سیستم (کل حجم معاملات، تعداد کاربران، کل کارمزد جمع شده)
+CREATE OR REPLACE VIEW public.admin_stats AS
+SELECT 
+    (SELECT COUNT(*) FROM public.profiles) as total_users,
+    (SELECT COUNT(*) FROM public.challenges WHERE status = 'completed') as total_completed_duels,
+    (SELECT SUM(amount_usd) FROM public.fee_logs) as total_volume_usd,
+    (SELECT SUM(fee_collected) FROM public.fee_logs) as total_revenue_usd;
+
+-- ۲. شناسایی کاربران مشکوک (کسانی که با یک گوشی بیش از ۳ اکانت ساخته‌اند)
+CREATE OR REPLACE VIEW public.suspicious_users AS
+SELECT 
+    device_id, 
+    COUNT(id) as account_count,
+    ARRAY_AGG(username) as usernames
+FROM public.profiles
+WHERE device_id IS NOT NULL
+GROUP BY device_id
+HAVING COUNT(id) > 3;
