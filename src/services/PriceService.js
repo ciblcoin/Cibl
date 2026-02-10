@@ -51,3 +51,14 @@ export const usePortfolioData = (userAssets, currency) => {
 
   return { prices, totalBalance };
 };
+<MotiView
+  animate={{ 
+    scale: isPriceChanged ? 1.05 : 1,
+    color: priceDirection === 'up' ? '#22c55e' : '#ef4444' 
+  }}
+  transition={{ type: 'spring', damping: 15 }}
+>
+  <Text className="text-5xl font-black">
+    {currencySymbol}{convertedValue}
+  </Text>
+</MotiView>
