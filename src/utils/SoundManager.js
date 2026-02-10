@@ -1,94 +1,51 @@
 import { Audio } from 'expo-av';
-import * as Haptics from 'expo-haptics';
 
-const SOUND_ASSETS = {
-  WIN: require('../../assets/sounds/win_coins.mp3'),
-  LOSS: require('../../assets/sounds/loss_thud.mp3'),
-  HEARTBEAT: require('../../assets/sounds/heartbeat_fast.mp3'),
-  SWIPE: require('../../assets/sounds/neon_swipe.mp3'),
-  CHALLENGE_START: require('../../assets/sounds/glitch_start.mp3'),
-  BG_MUSIC: require('../../assets/sounds/cyberpunk_bg.mp3'),
+const SOUND_FILES = {
+  TX_SUCCESS: require('../../assets/sounds/tx_success.mp3'),
+  TX_FAILED: require('../../assets/sounds/tx_failed.mp3'),
+  TX_FLYOUT: require('../../assets/sounds/tx_flyout.mp3'),
+  TX_CHARGE: require('../../assets/sounds/tx_charge.mp3'),
+  NEON_TICK: require('../../assets/sounds/neon_tick.mp3'),
+  NAV_SWOOSH: require('../../assets/sounds/nav_swoosh.mp3'),
+  SCAN_BEEP: require('../../assets/sounds/scan_beep.mp3'),
+  REFRESH: require('../../assets/sounds/refresh_glitch.mp3'),
+  AUTH: require('../../assets/sounds/auth_pass.mp3'),
+  ALARM: require('../../assets/sounds/alarm_critical.mp3'),
+  NOTIFY: require('../../assets/sounds/notification_pop.mp3'),
+  SWORD: require('../../assets/sounds/sword_clash.mp3'),
+  WIN: require('../../assets/sounds/duel_win.mp3'),
+  LOSS: require('../../assets/sounds/duel_loss.mp3'),
+  MSG: require('../../assets/sounds/msg_send.mp3'),
 };
 
 class SoundManager {
-  static bgSoundInstance = null;
+  static instance = null;
+  sounds = {};
+  isEnabled = true; // امکان غیرفعال کردن از تنظیمات
 
-  /**
-   * پخش موسیقی پس‌زمینه به صورت لوپ (Loop)
-   */
-  static async startBackgroundMusic() {
+  async init() {
+    // بارگذاری اولیه تمام صداها برای جلوگیری از تاخیر
+    for (const [key, file] of Object.entries(SOUND_FILES)) {
+      const { sound } = await Audio.Sound.createAsync(file);
+      this.sounds[key] = sound;
+    }
+  }
+
+  async play(soundKey) {
+    if (!this.isEnabled || !this.sounds[soundKey]) return;
+
     try {
-      if (this.bgSoundInstance) return; // جلوگیری از پخش چندباره
-
-      const { sound } = await Audio.Sound.createAsync(
-        SOUND_ASSETS.BG_MUSIC,
-        { isLooping: true, volume: 0.3, shouldPlay: true }
-      );
-      this.bgSoundInstance = sound;
+      // بازنشانی صدا به ابتدا و پخش
+      await this.sounds[soundKey].stopAsync();
+      await this.sounds[soundKey].playAsync();
     } catch (error) {
-      console.error("BG Music Load Error:", error);
+      console.log("Sound play error:", error);
     }
   }
 
-  /**
-   * توقف موسیقی پس‌زمینه
-   */
-  static async stopBackgroundMusic() {
-    if (this.bgSoundInstance) {
-      await this.bgSoundInstance.stopAsync();
-      await this.bgSoundInstance.unloadAsync();
-      this.bgSoundInstance = null;
-    }
-  }
-
-  /**
-   * پخش افکت صوتی به همراه هپتیک (لرزش) مناسب
-   * @param {string} soundKey - کلید صدا از SOUND_ASSETS
-   */
-  static async playEffect(soundKey) {
-    try {
-      // ۱. مدیریت لرزش (Haptics) بر اساس نوع اتفاق
-      this.triggerHaptic(soundKey);
-
-      // ۲. پخش صدا
-      const { sound } = await Audio.Sound.createAsync(SOUND_ASSETS[soundKey]);
-      await sound.playAsync();
-
-      // آزاد کردن حافظه پس از اتمام صدا
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
-          sound.unloadAsync();
-        }
-      });
-    } catch (error) {
-      console.log("Effect Play Error:", error);
-    }
-  }
-
-  /**
-   * مدیریت هوشمند لرزش گوشی
-   */
-  static triggerHaptic(soundKey) {
-    switch (soundKey) {
-      case 'WIN':
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        break;
-      case 'LOSS':
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        break;
-      case 'SWIPE':
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        break;
-      case 'CHALLENGE_START':
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        break;
-      case 'HEARTBEAT':
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        break;
-      default:
-        break;
-    }
+  setMute(isMuted) {
+    this.isEnabled = !isMuted;
   }
 }
 
-export default SoundManager;
+export default new SoundManager();
