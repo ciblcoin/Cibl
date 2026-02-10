@@ -1,21 +1,42 @@
 import { ethers } from 'ethers';
-import * as bip39 from 'bip39';
+import { EVM_CONFIG } from './config';
 
-class EVMWallet {
-    // مسیر استاندارد اتریوم
-    static PATH = "m/44'/60'/0'/0/0";
+export const getEvmProvider = (networkKey) => {
+  const config = EVM_CONFIG[networkKey];
+  return new ethers.JsonRpcProvider(config.rpc);
+};
 
-    static async createWallet(mnemonic) {
-        const seed = await bip39.mnemonicToSeed(mnemonic);
-        const hdNode = ethers.utils.HDNode.fromSeed(seed);
-        const childNode = hdNode.derivePath(this.PATH);
-        return new ethers.Wallet(childNode.privateKey);
+export const createEvmWallet = (privateKey, networkKey) => {
+  const config = EVM_CONFIG[networkKey];
+  const provider = getEvmProvider(networkKey);
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  return {
+    address: wallet.address,
+    network: config.name,
+    
+    // دریافت موجودی نئونی
+    getBalance: async () => {
+      const balance = await provider.getBalance(wallet.address);
+      return ethers.formatEther(balance);
+    },
+
+    // تخمین کارمزد (Gas Estimate) قبل از ارسال
+    estimateGas: async (to, amount) => {
+      const tx = { to, value: ethers.parseEther(amount) };
+      const estimate = await provider.estimateGas(tx);
+      const feeData = await provider.getFeeData();
+      const totalCost = estimate * feeData.gasPrice;
+      return ethers.formatEther(totalCost);
+    },
+
+    // ارسال تراکنش با افکت صوتی موفقیت
+    sendTx: async (to, amount) => {
+      const tx = await wallet.sendTransaction({
+        to,
+        value: ethers.parseEther(amount)
+      });
+      return tx.hash;
     }
-
-    static async getBalance(address, rpcUrl) {
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-        const balance = await provider.getBalance(address);
-        return ethers.utils.formatEther(balance);
-    }
-}
-export default EVMWallet;
+  };
+};
