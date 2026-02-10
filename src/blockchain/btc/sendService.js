@@ -48,3 +48,30 @@ export const sendBitcoin = async (privateKeyWIF, toAddress, amountInSatoshi) => 
   const txHex = signedPsbt.extractTransaction().toHex();
   return await broadcastTx(txHex); // ارسال به بلاک‌چین
 };
+// در بخشی از کامپوننت ارسال
+const handleSend = async () => {
+  try {
+    // ۱. پخش صدای شارژ شدن (آماده‌سازی)
+    SoundManager.play('TX_CHARGE');
+    
+    // ۲. شروع انیمیشن پرتاب نئونی
+    setIsFlying(true);
+
+    let txHash;
+    if (selectedNetwork === 'BTC') {
+      txHash = await sendBitcoin(userPrivateKey, recipientAddress, amount);
+    } 
+    // ... سایر شبکه‌ها (ETH, TON, etc.)
+
+    // ۳. اگر موفق بود: پخش صدای تایید و لرزش
+    SoundManager.play('TX_SUCCESS');
+    alert(`Transaction Sent: ${txHash}`);
+    
+  } catch (error) {
+    // ۴. در صورت خطا: صدای شکست و لرزش سنگین
+    SoundManager.play('TX_FAILED');
+    console.error(error);
+  } finally {
+    setIsFlying(false);
+  }
+};
