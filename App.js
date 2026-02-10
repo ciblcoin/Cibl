@@ -1,170 +1,142 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, LogBox, StatusBar } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as SplashScreen from 'expo-splash-screen';
-import * as Font from 'expo-font';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, SafeAreaView, StatusBar, TouchableOpacity, Text, Dimensions } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { MotiView, AnimatePresence } from 'moti';
+import { Feather } from '@expo/vector-icons';
 
-// Icon Library
-import { 
-  LayoutDashboard, 
-  ArrowLeftRight, 
-  MessageCircle, 
-  History, 
-  Settings 
-} from 'lucide-react-native';
+// --- ابزارها و مدیریت صدا ---
+import SoundManager from './src/utils/SoundManager';
+import { EVM_CONFIG } from './src/blockchain/evm/config';
 
-// Import Custom Services
-import { NotificationService } from './src/services/notificationService';
-import { supabase } from './src/services/supabaseClient';
+// --- کامپوننت‌های بخش‌های مختلف ---
+import TotalBalance from './src/components/TotalBalance';
+import NetworkScroller from './src/components/NetworkScroller';
+import PortfolioChart from './src/components/PortfolioChart';
+import TokenAssetsList from './src/components/TokenAssetsList';
+import FlyOutEffect from './src/components/FlyOutEffect';
+import CombatChat from './src/screens/CombatChat'; 
+import NftGallery from './src/screens/NftGallery';
+import StakingVault from './src/components/StakingVault';
+import SecurityVault from './src/components/SecurityVault';
+import SwapScreen from './src/screens/SwapScreen'; // بخش جدید سوآپ
 
-// Import Screens
-import MainDashboard from './src/screens/main/MainDashboard';
-import TokenDetailScreen from './src/screens/trade/TokenDetailScreen';
-import SwapScreen from './src/screens/trade/SwapScreen';
-import ActivityFeed from './src/screens/main/ActivityFeed';
-import ChatScreen from './src/screens/main/ChatScreen';
-import SettingsScreen from './src/screens/main/SettingsScreen';
+const { width } = Dimensions.get('window');
 
-// Ignore specific warnings for a cleaner console in production
-LogBox.ignoreLogs(['Setting a timer']);
-
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
-
-// --- BOTTOM TAB NAVIGATION CONFIGURATION ---
-function MainTabs() {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: { 
-          backgroundColor: '#0A0E17', 
-          borderTopColor: '#161B28', 
-          height: 90, 
-          paddingBottom: 25,
-          paddingTop: 10
-        },
-        tabBarActiveTintColor: '#FFD700', // CiBL Gold
-        tabBarInactiveTintColor: '#475569', // Slate Gray
-        tabBarLabelStyle: { fontSize: 10, fontWeight: 'bold' },
-      }}
-    >
-      <Tab.Screen 
-        name="Wallet" 
-        component={MainDashboard} 
-        options={{ 
-          tabBarIcon: ({ color }) => <LayoutDashboard color={color} size={24} /> 
-        }} 
-      />
-      <Tab.Screen 
-        name="Swap" 
-        component={SwapScreen} 
-        options={{ 
-          tabBarIcon: ({ color }) => <ArrowLeftRight color={color} size={24} /> 
-        }} 
-      />
-      <Tab.Screen 
-        name="GambleFi" 
-        component={ChatScreen} 
-        options={{ 
-          tabBarIcon: ({ color }) => <MessageCircle color={color} size={24} /> 
-        }} 
-      />
-      <Tab.Screen 
-        name="Activity" 
-        component={ActivityFeed} 
-        options={{ 
-          tabBarIcon: ({ color }) => <History color={color} size={24} /> 
-        }} 
-      />
-      <Tab.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
-        options={{ 
-          tabBarIcon: ({ color }) => <Settings color={color} size={24} /> 
-        }} 
-      />
-    </Tab.Navigator>
-  );
-}
-
-// --- MAIN APP ENTRY POINT ---
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
+  // --- استیت‌های مدیریتی ---
+  const [activeTab, setActiveTab] = useState('wallet');
+  const [selectedNetwork, setSelectedNetwork] = useState('ALL');
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // --- راه‌اندازی سیستم نئونی ---
   useEffect(() => {
-    async function prepare() {
-      try {
-        // 1. Prevent splash screen from hiding automatically
-        await SplashScreen.preventAutoHideAsync();
-
-        // 2. Load Global Assets & Fonts
-        await Font.loadAsync({
-          'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
-          'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
-          'SpaceMono-Regular': require('./assets/fonts/SpaceMono-Regular.ttf'),
-        });
-
-        // 3. Initialize Push Notifications
-        const pushToken = await NotificationService.registerForPushNotifications();
-        if (pushToken) {
-          console.log("Push Notification Token Ready:", pushToken);
-        }
-
-        // 4. Initial Database Ping (Optional check for Supabase connectivity)
-        const { data, error } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
-        if (error) console.error("Supabase Connectivity Error:", error.message);
-
-      } catch (e) {
-        console.warn("Initialization Error:", e);
-      } finally {
-        // Tell the application to render
-        setAppIsReady(true);
-      }
-    }
-
-    prepare();
+    const startCiBL = async () => {
+      await SoundManager.init();
+      SoundManager.play('AUTH'); // صدای ورود امنیتی
+      setIsLoaded(true);
+    };
+    startCiBL();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately!
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
+  if (!isLoaded) return null;
 
-  if (!appIsReady) {
-    return null;
-  }
+  // تابع تغییر تب با افکت صوتی اختصاصی
+  const changeTab = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'wallet') SoundManager.play('NEON_TICK');
+    if (tab === 'swap') SoundManager.play('TX_CHARGE'); // صدای شارژ برای سوآپ
+    if (tab === 'chat') SoundManager.play('SWORD');
+    if (tab === 'nfts') SoundManager.play('NAV_SWOOSH');
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#0A0E17' }} onLayout={onLayoutRootView}>
-      <StatusBar barStyle="light-content" />
-      <NavigationContainer>
-        <Stack.Navigator 
-          screenOptions={{ 
-            headerShown: false,
-            animation: 'slide_from_right'
-          }}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView className="flex-1 bg-black">
+        <StatusBar barStyle="light-content" />
+        
+        {/* افکت بصری پرتاب تراکنش */}
+        <FlyOutEffect isVisible={false} color="#06b6d4" />
+
+        <View className="flex-1">
+          <AnimatePresence exitBeforeEnter>
+            {/* ۱. ویوی کیف پول */}
+            {activeTab === 'wallet' && (
+              <MotiView from={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} key="wallet">
+                <ScrollView showsVerticalScrollIndicator={false} className="mb-24">
+                  <TotalBalance totalValue={9450.75} currencyCode="USD" />
+                  <NetworkScroller activeNet={selectedNetwork} onSelect={setSelectedNetwork} />
+                  <PortfolioChart color={EVM_CONFIG[selectedNetwork]?.color || '#06b6d4'} />
+                  <TokenAssetsList filterNetwork={selectedNetwork} />
+                </ScrollView>
+              </MotiView>
+            )}
+
+            {/* ۲. ویوی سوآپ (بخش مرکزی) */}
+            {activeTab === 'swap' && (
+              <MotiView from={{opacity:0, scale:0.9}} animate={{opacity:1, scale:1}} key="swap">
+                <SwapScreen />
+              </MotiView>
+            )}
+
+            {/* ۳. سایر بخش‌ها */}
+            {activeTab === 'nfts' && <NftGallery key="nfts" onClose={() => setActiveTab('wallet')} />}
+            {activeTab === 'staking' && <StakingVault key="staking" asset="TON" apy={12.5} />}
+            {activeTab === 'chat' && <CombatChat key="chat" />}
+            {activeTab === 'security' && <SecurityVault key="security" />}
+          </AnimatePresence>
+        </View>
+
+        {/* --- نوار ابزار نئونی نهایی با دکمه شناور سوآپ --- */}
+        <View className="absolute bottom-8 left-4 right-4 h-20 bg-slate-900/90 border border-slate-800 rounded-[35px] flex-row justify-between items-center px-4 shadow-2xl shadow-cyan-500/20">
+          
+          <TabButton icon="wallet" isActive={activeTab === 'wallet'} onPress={() => changeTab('wallet')} />
+          <TabButton icon="image" isActive={activeTab === 'nfts'} onPress={() => changeTab('nfts')} />
+
+          {/* دکمه مرکزی شناور برای SWAP */}
+          <TouchableOpacity 
+            onPress={() => changeTab('swap')}
+            style={{ 
+              top: -30, 
+              width: 70, height: 70, 
+              borderRadius: 35, 
+              backgroundColor: '#06b6d4',
+              justifyContent: 'center', alignItems: 'center',
+              borderWidth: 5, borderColor: '#000',
+              shadowColor: '#06b6d4', shadowOffset: {width:0, height:10}, shadowOpacity: 0.5, shadowRadius: 15
+            }}
+          >
+            <MotiView
+              animate={{ rotate: activeTab === 'swap' ? '180deg' : '0deg' }}
+              transition={{ type: 'spring' }}
+            >
+              <Feather name="repeat" size={28} color="black" />
+            </MotiView>
+          </TouchableOpacity>
+
+          <TabButton icon="zap" isActive={activeTab === 'staking'} onPress={() => changeTab('staking')} />
+          <TabButton icon="message-square" isActive={activeTab === 'chat'} onPress={() => changeTab('chat')} />
+
+        </View>
+
+        {/* دکمه کوچک امنیت در گوشه بالا برای دسترسی سریع */}
+        <TouchableOpacity 
+          onPress={() => changeTab('security')}
+          className="absolute top-14 right-6 bg-slate-900/50 p-2 rounded-full border border-slate-800"
         >
-          {/* Main App Flow with Bottom Tabs */}
-          <Stack.Screen name="MainRoot" component={MainTabs} />
-          
-          {/* High-Level Screens (Opened on top of everything) */}
-          <Stack.Screen 
-            name="TokenDetail" 
-            component={TokenDetailScreen} 
-            options={{ 
-              presentation: 'modal', // Modern slide-up card on iOS
-              animation: 'slide_from_bottom' 
-            }} 
-          />
-          
-          {/* Here you can add more full-screen views like "TransactionSuccess" or "ReferralDetails" */}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </View>
+          <Feather name="shield" size={20} color={activeTab === 'security' ? '#22d3ee' : '#475569'} />
+        </TouchableOpacity>
+
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
+
+// کامپوننت دکمه‌های تب‌بار
+const TabButton = ({ icon, isActive, onPress }) => (
+  <TouchableOpacity onPress={onPress} className="items-center justify-center w-12">
+    <MotiView animate={{ scale: isActive ? 1.2 : 1, opacity: isActive ? 1 : 0.4 }}>
+      <Feather name={icon} size={22} color={isActive ? '#22d3ee' : '#94a3b8'} />
+    </MotiView>
+    {isActive && <View className="w-1 h-1 bg-cyan-400 rounded-full mt-1" />}
+  </TouchableOpacity>
+);
