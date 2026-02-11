@@ -63,3 +63,20 @@ export default function SeedVerification({ mnemonic, onVerified, onBack }) {
     </View>
   );
 }
+
+{
+  "wallets": [
+    {
+      "id": "uuid-123",
+      "name": "Main Wallet",
+      "type": "mnemonic", // یا 'private_key' یا 'watch'
+      "mnemonic_encrypted": "AES_ENCRYPTED_STRING",
+      "networks": {
+        "solana": "ADDR...",
+        "bitcoin": "ADDR...",
+        "bsc": "ADDR..."
+      }
+    }
+  ],
+  "active_wallet_id": "uuid-123"
+}
