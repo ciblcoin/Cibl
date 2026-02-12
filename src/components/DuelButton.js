@@ -75,3 +75,14 @@ const DuelButton = ({ onStartChallenge }) => {
 };
 
 export default DuelButton;
+
+
+if (seconds === 0) {
+  // فراخوانی ورکر برای دریافت برنده
+  const response = await fetch('https://your-worker.cloudflare.com/resolve-winner', {
+    method: 'POST',
+    body: JSON.stringify({ challengeId: '...' })
+  });
+  const result = await response.json();
+  alert(result.winner === userAddress ? "You Won! 🎉" : "Better luck next time!");
+}
