@@ -59,3 +59,34 @@ class TransactionFactory {
 }
 
 export default TransactionFactory;
+
+static async calculateFeeSplitting(amount, userAddress) {
+  // ۱. پیدا کردن معرفِ این کاربر از Supabase
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('referred_by')
+    .eq('address', userAddress)
+    .single();
+
+  const totalFee = amount * 0.006; // 0.6%
+  let adminShare = totalFee;
+  let referrerShare = 0;
+  let referrerWallet = null;
+
+  if (profile?.referred_by) {
+    // ۲. اگر معرف داشت، بخشی از سود را به او بده
+    const { data: referrer } = await supabase
+      .from('profiles')
+      .select('address')
+      .eq('referral_code', profile.referred_by)
+      .single();
+
+    if (referrer) {
+      referrerShare = totalFee * 0.33; // حدود 0.2% از کل مبلغ
+      adminShare = totalFee - referrerShare; // 0.4% باقی‌مانده برای شما
+      referrerWallet = referrer.address;
+    }
+  }
+
+  return { adminShare, referrerShare, referrerWallet };
+}
