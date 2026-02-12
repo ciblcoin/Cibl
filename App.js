@@ -4,6 +4,74 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { MotiView, AnimatePresence } from 'moti';
 import { Feather } from '@expo/vector-icons';
 
+
+// App.js - THE ULTIMATE NEON EDITION
+import React, { useState, useEffect } from 'react';
+import { View, SafeAreaView, StatusBar } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+// کامپوننت‌های وارد شده (که قبلاً ساختیم)
+import SoundManager from './src/utils/SoundManager';
+import NeonToast from './src/components/NeonToast';
+import TotalBalance from './src/components/TotalBalance';
+import NetworkScroller from './src/components/NetworkScroller';
+import SwapScreen from './src/screens/SwapScreen';
+import CombatChat from './src/screens/CombatChat';
+import Marketplace from './src/screens/Marketplace';
+import NftGallery from './src/screens/NftGallery';
+import SecurityVault from './src/components/SecurityVault';
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('wallet');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    SoundManager.init().then(() => {
+      SoundManager.play('AUTH');
+      setIsLoaded(true);
+    });
+  }, []);
+
+  if (!isLoaded) return null;
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView className="flex-1 bg-black">
+        <StatusBar barStyle="light-content" />
+        
+        {/* بدنه اصلی بر اساس تب فعال */}
+        <View className="flex-1">
+          {activeTab === 'wallet' && <View className="flex-1"><TotalBalance totalValue={9450.75} currencyCode="USD" /><NetworkScroller onSelect={() => SoundManager.play('NEON_TICK')} /></View>}
+          {activeTab === 'swap' && <SwapScreen />}
+          {activeTab === 'chat' && <CombatChat />}
+          {activeTab === 'market' && <Marketplace />}
+          {activeTab === 'nfts' && <NftGallery onClose={() => setActiveTab('wallet')} />}
+        </View>
+
+        {/* نوار ابزار نئونی (TabBar) */}
+        <View className="absolute bottom-6 left-4 right-4 h-20 bg-slate-900/95 border border-slate-800 rounded-[35px] flex-row justify-around items-center px-2">
+          <TabButton icon="wallet" isActive={activeTab === 'wallet'} onPress={() => {setActiveTab('wallet'); SoundManager.play('NEON_TICK');}} />
+          <TabButton icon="image" isActive={activeTab === 'nfts'} onPress={() => {setActiveTab('nfts'); SoundManager.play('NAV_SWOOSH');}} />
+          
+          {/* دکمه مرکزی شناور سوآپ */}
+          <TouchableOpacity 
+            onPress={() => {setActiveTab('swap'); SoundManager.play('TX_CHARGE');}}
+            className="bg-cyan-500 w-16 h-16 rounded-full -top-6 items-center justify-center shadow-lg shadow-cyan-500"
+          >
+            <Feather name="repeat" size={28} color="black" />
+          </TouchableOpacity>
+
+          <TabButton icon="shopping-bag" isActive={activeTab === 'market'} onPress={() => {setActiveTab('market'); SoundManager.play('NOTIFY');}} />
+          <TabButton icon="message-square" isActive={activeTab === 'chat'} onPress={() => {setActiveTab('chat'); SoundManager.play('SWORD');}} />
+        </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
+  );
+}
+
+
+
+
 // --- ابزارها و مدیریت صدا ---
 import SoundManager from './src/utils/SoundManager';
 import { EVM_CONFIG } from './src/blockchain/evm/config';
