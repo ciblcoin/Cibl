@@ -25,3 +25,4 @@ class AuthService {
     return { data, error };
   }
 }
+public.profiles
