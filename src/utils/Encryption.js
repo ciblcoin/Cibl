@@ -48,3 +48,16 @@ class Encryption {
 }
 
 export default Encryption;
+
+import Encryption from '../utils/Encryption';
+import * as SecureStore from 'expo-secure-store';
+
+const saveWalletSafely = async (mnemonic) => {
+    // 1. رمزنگاری کلمات بازیابی
+    const encryptedMnemonic = await Encryption.encrypt(mnemonic);
+    
+    // 2. ذخیره در بخش امن سیستم‌عامل (Keychain/Keystore)
+    await SecureStore.setItemAsync('user_wallet', encryptedMnemonic);
+    
+    console.log("Wallet secured successfully.");
+};
