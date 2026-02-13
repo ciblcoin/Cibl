@@ -63,3 +63,15 @@ const TotalBalance = ({ totalValue, currencyCode }) => {
 };
 
 export default TotalBalance;
+const BalanceDisplay = () => {
+  const btcData = useBalance('BTC');
+  
+  return (
+    <View>
+      <Text className="text-slate-500 text-xs">BITCOIN BALANCE</Text>
+      {/* اعداد چرخنده با دیتای کش شده فوراً نمایش داده می‌شوند */}
+      <RollingNumber value={btcData.amount} /> 
+      {btcData.loading && <ActivityIndicator size="small" color="#06b6d4" />}
+    </View>
+  );
+};
