@@ -70,3 +70,50 @@ const styles = StyleSheet.create({
   // ... سایر استایل‌ها همان قبلی است ...
   miniLabel: { fontSize: 8, marginTop: 45, color: '#94A3B8', textAlign: 'center' }
 });
+
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import { InteractionService } from '../utils/InteractionService';
+
+const ThemeSwitcher = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  const handleThemeChange = (id) => {
+    toggleTheme(id);
+    InteractionService.playInteraction(Themes[id]);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={[styles.label, { color: theme.textMuted }]}>UI PROTOCOL</Text>
+      <View style={styles.row}>
+        {Object.values(Themes).map((t) => (
+          <TouchableOpacity
+            key={t.id}
+            onPress={() => handleThemeChange(t.id)}
+            style={[
+              styles.swatch,
+              { backgroundColor: t.primary },
+              theme.id === t.id && { borderColor: '#FFF', borderWidth: 2, transform: [{ scale: 1.1 }] }
+            ]}
+          >
+            <Text style={[styles.swatchLabel, { color: t.id === 'light' ? '#000' : '#FFF' }]}>
+              {t.name.split(' ')[1]}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { padding: 20, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.03)' },
+  label: { fontFamily: 'Orbitron-Bold', fontSize: 10, letterSpacing: 2, marginBottom: 15 },
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  swatch: { width: 70, height: 45, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  swatchLabel: { fontSize: 8, fontFamily: 'Orbitron-Bold' }
+});
+
+export default ThemeSwitcher;
