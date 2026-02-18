@@ -576,3 +576,17 @@ const RootNavigation = () => {
   );
 };
 
+
+import { StatusBar } from 'expo-status-bar';
+
+const MainApp = () => {
+  const { theme } = useTheme();
+
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      {/* اگر تم لایت بود، آیکون‌های استاتوس بار تیره شوند */}
+      <StatusBar style={theme.id === 'light' ? 'dark' : 'light'} />
+      <Navigation />
+    </View>
+  );
+};
