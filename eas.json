@@ -1,0 +1,17 @@
+{
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "app-bundle" 
+      },
+      "ios": {
+        "simulator": false,
+        "provisioningProfile": "production"
+      },
+      "env": {
+        "APP_ENV": "production",
+        "GOOGLE_TRANSLATE_API_KEY": "YOUR_REAL_KEY"
+      }
+    }
+  }
+}
