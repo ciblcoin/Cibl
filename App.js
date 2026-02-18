@@ -303,3 +303,15 @@ return (
   </BiometricGuard>
 );
 
+
+// در فایل ThemeContext.js یا مشابه آن
+export const theme = {
+  cyber: {
+    primary: '#06b6d4', // Cyan
+    glow: 'rgba(6, 182, 212, 0.5)',
+  },
+  matrix: {
+    primary: '#00ff41', // Matrix Green
+    glow: 'rgba(0, 255, 65, 0.5)',
+  }
+};
