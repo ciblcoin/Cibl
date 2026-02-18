@@ -11,3 +11,25 @@ const themeStyle = {
   shadowColor: currentTheme.glow,
   shadowRadius: 10,
 };
+
+
+import React, { createContext, useState, useContext } from 'react';
+import { Themes } from '../data/Themes';
+
+const ThemeContext = createContext();
+
+export const ThemeProvider = ({ children }) => {
+  const [currentTheme, setCurrentTheme] = useState(Themes.cyan);
+
+  const toggleTheme = (themeId) => {
+    setCurrentTheme(Themes[themeId]);
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme: currentTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+export const useTheme = () => useContext(ThemeContext);
