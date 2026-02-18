@@ -1,0 +1,67 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+const SendScreen = () => {
+  // این مقادیر از FeeService که قبلاً ساختیم می‌آیند
+  const fees = {
+    networkFee: '0.00021',
+    platformFee: '0.00005',
+    totalCost: '0.10026'
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* سایر بخش‌های صفحه مثل فیلد آدرس و مبلغ */}
+
+      {/* کد مورد نظر شما اینجا قرار می‌گیرد */}
+      <View style={styles.feeContainer}>
+        <View style={styles.feeRow}>
+          <Text style={styles.feeLabel}>Network Fee (Gas)</Text>
+          <Text style={styles.feeValue}>{fees.networkFee} ETH</Text>
+        </View>
+        
+        <View style={styles.feeRow}>
+          <Text style={styles.feeLabel}>CiBL Service Fee</Text>
+          <Text style={[styles.feeValue, {color: '#06b6d4'}]}>{fees.platformFee} ETH</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.feeRow}>
+          <Text style={styles.totalLabel}>Total Deducted</Text>
+          <Text style={styles.totalValue}>{fees.totalCost} ETH</Text>
+        </View>
+      </View>
+
+      {/* دکمه تایید نهایی */}
+    </View>
+  );
+};
+
+// حتماً استایل‌های زیر را هم به فایل اضافه کن تا نئونی شود
+const styles = StyleSheet.create({
+  feeContainer: {
+    backgroundColor: '#0F172A', // زمینه تیره نئونی
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    marginTop: 20
+  },
+  feeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10
+  },
+  feeLabel: { color: '#94A3B8', fontFamily: 'Cairo-Regular' },
+  feeValue: { color: '#fff', fontFamily: 'Orbitron-Bold' },
+  divider: {
+    height: 1,
+    backgroundColor: '#1E293B',
+    marginVertical: 10
+  },
+  totalLabel: { color: '#fff', fontFamily: 'Cairo-Bold' },
+  totalValue: { color: '#06b6d4', fontFamily: 'Orbitron-Bold', fontSize: 16 }
+});
+
+export default SendScreen;
