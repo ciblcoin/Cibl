@@ -85,3 +85,51 @@
     }
   }
 }
+{
+  "expo": {
+    "name": "CiBL Wallet",
+    "slug": "cibl-wallet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/app-icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourname.cibl",
+      "bitcode": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.yourname.cibl",
+      "permissions": [
+        "CAMERA",
+        "USE_BIOMETRIC",
+        "NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Orbitron-Bold.ttf",
+            "./assets/fonts/Cairo-Bold.ttf"
+          ]
+        }
+      ],
+      "expo-localization"
+    ]
+  }
+}
