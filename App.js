@@ -208,3 +208,46 @@ const TabButton = ({ icon, isActive, onPress }) => (
     {isActive && <View className="w-1 h-1 bg-cyan-400 rounded-full mt-1" />}
   </TouchableOpacity>
 );
+import * as SplashScreen from 'expo-splash-screen';
+import { Asset } from 'expo-asset';
+import * as Font from 'expo-font';
+
+// جلوگیری از مخفی شدن خودکار صفحه اسپلش
+SplashScreen.preventAutoHideAsync();
+
+export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // ۱. لود کردن فونت‌ها
+        await Font.loadAsync({
+          'Orbitron-Bold': require('./assets/fonts/Orbitron-Bold.ttf'),
+          'Cairo-Bold': require('./assets/fonts/Cairo-Bold.ttf'),
+        });
+
+        // ۲. پیش‌بارگذاری تصاویر سنگین (WebP)
+        await Asset.loadAsync([
+          require('./assets/images/background-neon.webp'),
+          require('./assets/icons/app-icon.png'),
+        ]);
+
+        // ۳. شبیه‌سازی لودینگ سیستم (اختیاری)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+        await SplashScreen.hideAsync(); // حالا صفحه اصلی را نشان بده
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!appIsReady) return null;
+
+  return <MainNavigation />;
+}
+
