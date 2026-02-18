@@ -562,3 +562,17 @@ export default function App() {
   );
 }
 
+const RootNavigation = () => {
+  const { theme, loading } = useTheme();
+
+  if (loading) {
+    return <View style={{ flex: 1, backgroundColor: '#000' }} />; // یا اسپلش اسکرین
+  }
+
+  return (
+    <NavigationContainer>
+      {/* استک‌های شما */}
+    </NavigationContainer>
+  );
+};
+
