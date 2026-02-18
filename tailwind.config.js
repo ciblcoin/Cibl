@@ -23,3 +23,22 @@ theme: {
     }
   }
 }
+
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          DEFAULT: '#06B6D4',
+          purple: '#A855F7',
+          pink: '#F43F5E',
+        },
+        dark: {
+          bg: '#000000',
+          card: '#0F172A',
+          border: '#1E293B',
+        }
+      }
+    },
+  },
+};
