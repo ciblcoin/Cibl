@@ -250,4 +250,26 @@ export default function App() {
 
   return <MainNavigation />;
 }
+export default function App() {
+  const [showAnimatedSplash, setShowAnimatedSplash] = useState(true);
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  // منطق لود کردن دارایی‌ها (که قبلاً نوشتیم)
+  useEffect(() => {
+    prepareAssets().then(() => setAppIsReady(true));
+  }, []);
+
+  if (!appIsReady) return null; // نمایش اسپلش استاتیک اکسپو
+
+  if (showAnimatedSplash) {
+    return <AnimatedSplash onFinish={() => setShowAnimatedSplash(false)} />;
+  }
+
+  return (
+    <NavigationContainer>
+      <MainStack />
+    </NavigationContainer>
+  );
+}
+
 
