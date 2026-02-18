@@ -122,3 +122,12 @@ const SendScreen = () => {
   );
 };
 
+const handleFinalConfirm = async () => {
+  const result = await TransactionService.sendTransaction(...);
+  
+  if (result.success) {
+    setShowSuccess(true);
+    // ارسال اعلان به کاربر
+    await NotifyService.sendTxSuccess(amount, selectedNet.symbol);
+  }
+};
