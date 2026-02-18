@@ -271,5 +271,8 @@ export default function App() {
     </NavigationContainer>
   );
 }
+// داخل useEffect در App.js
+await FeedbackManager.loadAll();
+
 
 
