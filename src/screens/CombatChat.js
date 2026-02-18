@@ -97,3 +97,27 @@ const sendMessage = () => {
   
   setInputText('');
 };
+const [cachedTranslation, setCachedTranslation] = useState(null);
+
+const handleTranslate = async () => {
+  if (isTranslated) {
+    setDisplayText(item.message);
+    setIsTranslated(false);
+    return;
+  }
+
+  // اگر قبلاً ترجمه شده، از حافظه بگیر و به گوگل درخواست نزن
+  if (cachedTranslation) {
+    setDisplayText(cachedTranslation);
+    setIsTranslated(true);
+    return;
+  }
+
+  setIsTranslating(true);
+  const translated = await translateText(item.message, i18n.language);
+  setDisplayText(translated);
+  setCachedTranslation(translated); // ذخیره برای دفعات بعد
+  setIsTranslating(false);
+  setIsTranslated(true);
+};
+
