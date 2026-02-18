@@ -274,5 +274,24 @@ export default function App() {
 // داخل useEffect در App.js
 await FeedbackManager.loadAll();
 
-
+{
+  "expo": {
+    "name": "CiBL Pro",
+    "icon": "./assets/icons/ui/logo-cibl.svg", 
+    "splash": {
+      "image": "./assets/images/background-neon.webp",
+      "resizeMode": "cover",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ],
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/ui/logo-cibl.svg",
+        "backgroundColor": "#000000"
+      }
+    }
+  }
+}
 
