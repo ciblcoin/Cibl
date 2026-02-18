@@ -85,3 +85,40 @@ return (
   </View>
 );
 
+import React, { useState } from 'react';
+import SuccessOverlay from '../components/SuccessOverlay';
+import SliderConfirm from '../components/SliderConfirm';
+
+const SendScreen = () => {
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [currentHash, setCurrentHash] = useState('');
+
+  const handleFinalConfirm = async () => {
+    // ۱. اجرای انیمیشن لودینگ (اختیاری)
+    // ۲. فراخوانی TransactionService برای ارسال واقعی
+    const result = await TransactionService.sendTransaction(...);
+    
+    if (result.success) {
+      setCurrentHash(result.hash);
+      setShowSuccess(true); // نمایش انفجار نئونی!
+    }
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#000' }}>
+      {/* ... بخش‌های ورودی و نمایش کارمزد ... */}
+
+      <SliderConfirm onConfirm={handleFinalConfirm} />
+
+      <SuccessOverlay 
+        visible={showSuccess} 
+        txHash={currentHash}
+        onFinish={() => {
+          setShowSuccess(false);
+          // هدایت کاربر به صفحه اصلی یا لیست تراکنش‌ها
+        }} 
+      />
+    </View>
+  );
+};
+
