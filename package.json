@@ -138,3 +138,49 @@
     "tailwindcss": "3.3.2"
   }
 }
+{
+  "name": "cibl-wallet",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "build:android": "eas build --platform android",
+    "build:ios": "eas build --platform ios"
+  },
+  "dependencies": {
+    "expo": "~50.0.0",
+    "expo-status-bar": "~1.11.1",
+    "react": "18.2.0",
+    "react-native": "0.73.2",
+    "react-native-gesture-handler": "~2.14.0",
+    "react-native-reanimated": "~3.6.1",
+    "moti": "^0.27.0",
+    "nativewind": "^2.0.11",
+    "lucide-react-native": "^0.322.0",
+    
+    "@ethersproject/shims": "^5.7.0",
+    "ethers": "^5.7.2",
+    "bip39": "^3.1.0",
+    "buffer": "^6.0.3",
+    "expo-secure-store": "~12.8.1",
+    "@react-native-async-storage/async-storage": "1.21.0",
+    
+    "expo-av": "~13.10.5",
+    "expo-notifications": "~0.27.6",
+    "react-native-webview": "13.6.3",
+    
+    "i18next": "^23.7.16",
+    "react-i18next": "^14.0.0",
+    
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "tailwindcss": "3.3.2"
+  },
+  "private": true
+}
