@@ -78,3 +78,22 @@ const ChatMessage = ({ item }) => {
     </View>
   );
 };
+const sendMessage = () => {
+  const cleanText = shieldMessage(inputText);
+  
+  // اگر پیام تماماً ستاره شد (یعنی خیلی نامناسب بود)
+  if (cleanText.includes('***') && cleanText.length === inputText.length) {
+    showToast('SECURITY', 'Message blocked: Policy violation', 'danger');
+    SoundManager.play('TX_FAILED');
+    return;
+  }
+
+  // ارسال پیام تمیز به سرور/بلاک‌چین
+  broadcastMessage({
+    username: currentUser.name,
+    message: cleanText,
+    rank: currentUser.rank
+  });
+  
+  setInputText('');
+};
