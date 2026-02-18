@@ -102,3 +102,17 @@ const styles = StyleSheet.create({
 });
 
 export default NetworkSelector;
+
+const NETWORK_CONFIGS = {
+  hyperevm: { rpc: "https://rpc.hyperevm.org", chainId: 123 }, // فرضی
+  polygon: { rpc: "https://polygon-rpc.com", chainId: 137 },
+  avalanche: { rpc: "https://api.avax.network/ext/bc/C/rpc", chainId: 43114 },
+  // سایر شبکه‌ها...
+};
+
+// تابع ارسال تغییر می‌کند تا پارامتر شبکه را بگیرد:
+static async sendTransaction(to, amount, networkId) {
+   const config = NETWORK_CONFIGS[networkId];
+   const provider = new ethers.JsonRpcProvider(config.rpc);
+   // ادامه فرآیند ارسال...
+}
