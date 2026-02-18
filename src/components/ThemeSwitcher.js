@@ -32,3 +32,41 @@ const styles = StyleSheet.create({
   box: { width: 40, height: 40, borderRadius: 10, borderWeight: 2, borderColor: 'transparent' },
   activeBox: { borderColor: '#FFF', transform: [{ scale: 1.1 }] }
 });
+
+const ThemeSwitcher = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  const themeOptions = [
+    { id: 'cyan', color: '#06b6d4', label: 'NEON' },
+    { id: 'purple', color: '#D946EF', label: 'SYNTH' },
+    { id: 'dark', color: '#1E293B', label: 'DARK' },
+    { id: 'light', color: '#E2E8F0', label: 'LIGHT' }
+  ];
+
+  return (
+    <View style={styles.container}>
+      <Text style={[styles.label, { color: theme.textMuted }]}>INTERFACE MODE:</Text>
+      <View style={styles.row}>
+        {themeOptions.map((opt) => (
+          <TouchableOpacity
+            key={opt.id}
+            onPress={() => toggleTheme(opt.id)}
+            style={[
+              styles.box,
+              { backgroundColor: opt.color },
+              theme.id === opt.id && [styles.activeBox, { borderColor: theme.primary }]
+            ]}
+          >
+             {/* نمایش نام کوچک تم زیر هر دایره */}
+             <Text style={styles.miniLabel}>{opt.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  // ... سایر استایل‌ها همان قبلی است ...
+  miniLabel: { fontSize: 8, marginTop: 45, color: '#94A3B8', textAlign: 'center' }
+});
