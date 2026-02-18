@@ -48,3 +48,27 @@ export const Themes = {
     border: '#E2E8F0'
   }
 };
+import * as Haptics from 'expo-haptics';
+
+export const Themes = {
+  cyan: {
+    // ... تنظیمات قبلی ...
+    hapticType: Haptics.ImpactFeedbackStyle.Heavy, // لرزش قوی دیجیتالی
+    sound: require('../../assets/sounds/neon-click.mp3'),
+  },
+  purple: {
+    // ... تنظیمات قبلی ...
+    hapticType: Haptics.ImpactFeedbackStyle.Medium, // لرزش متوسط سینتی‌سایزری
+    sound: require('../../assets/sounds/synth-click.mp3'),
+  },
+  dark: {
+    // ... تنظیمات قبلی ...
+    hapticType: Haptics.ImpactFeedbackStyle.Light, // لرزش بسیار نرم و کلاسیک
+    sound: require('../../assets/sounds/dark-click.mp3'),
+  },
+  light: {
+    // ... تنظیمات قبلی ...
+    hapticType: Haptics.ImpactFeedbackStyle.Light, // لرزش کوتاه شبیه کلیک فیزیکی
+    sound: require('../../assets/sounds/light-tap.mp3'),
+  }
+};
