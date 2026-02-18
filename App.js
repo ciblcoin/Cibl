@@ -541,3 +541,9 @@ export default function App() {
     </View>
   );
 }
+import { NotifyService } from './src/utils/NotifyService';
+
+useEffect(() => {
+  NotifyService.registerForPushNotifications();
+}, []);
+
