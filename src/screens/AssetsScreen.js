@@ -81,3 +81,15 @@ const AssetsScreen = () => {
 };
 
 export default AssetsScreen;
+
+import { Helpers } from '../utils/Helpers';
+
+// در بخش رندر آدرس کیف‌پول:
+<Text style={styles.addressText}>
+  {Helpers.shortenAddress(wallet.address)}
+</Text>
+
+// در بخش رندر قیمت‌ها:
+<Text style={styles.fiatText}>
+  {Helpers.formatUSD(item.price)}
+</Text>
