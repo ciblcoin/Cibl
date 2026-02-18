@@ -1,0 +1,52 @@
+{
+  "common": {
+    "wallet": "المحفظة",
+    "send": "إرسال",
+    "receive": "استلام",
+    "swap": "تبديل",
+    "scan": "مسح",
+    "copy": "نسخ",
+    "address": "العنوان",
+    "balance": "الرصيد",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "search": "بحث",
+    "next": "التالي",
+    "back": "رجوع"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "chat": "القتال",
+    "market": "السوق",
+    "settings": "الإعدادات",
+    "browser": "المتصفح"
+  },
+  "chat": {
+    "title": "دردشة القتال",
+    "placeholder": "اكتب رسالة...",
+    "translate": "ترجمة",
+    "translated_by": "ترجمة جوجل",
+    "rank": "الرتبة",
+    "duel_invite": "دعوة للمبارزة",
+    "policy_warning": "تم حظر الرسالة: انتهاك السياسة"
+  },
+  "security": {
+    "title": "مركز الأمان",
+    "backup_phrase": "نسخ احتياطي لعبارة السر",
+    "biometric": "القفل البيومتري",
+    "secure_now": "تأمين الآن",
+    "warning_text": "لا تشارك عبارة السر الخاصة بك مع أي شخص أبداً."
+  },
+  "networks": {
+    "select_network": "اختر الشبكة",
+    "recent_activity": "النشاط الأخير",
+    "status_confirmed": "مؤكد",
+    "status_pending": "قيد الانتظار"
+  },
+  "combat": {
+    "your_rank": "رتبتك",
+    "whale": "حوت",
+    "shark": "قرش",
+    "exiled": "منفي"
+  }
+}
