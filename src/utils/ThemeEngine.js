@@ -9,3 +9,10 @@ export const getFontByLanguage = (lng) => {
       return 'Orbitron-Bold';
   }
 };
+export const getTypography = (lng) => {
+  return {
+    fontFamily: lng === 'ar' ? 'Cairo-Bold' : 'Orbitron-Bold',
+    textAlign: lng === 'ar' ? 'right' : 'left',
+    flexDirection: lng === 'ar' ? 'row-reverse' : 'row'
+  };
+};
