@@ -1,9 +1,11 @@
+// در فایل ThemeEngine.js
 export const getFontByLanguage = (lng) => {
   switch(lng) {
-    case 'zh':
+    case 'ar':
+      return 'Cairo-Bold'; // فونت هندسی و مدرن برای عربی
     case 'jp':
-      return 'NotoSans-Bold'; // فونت بهینه برای کاراکترهای آسیایی
+      return 'NotoSansJP-Bold';
     default:
-      return 'Orbitron-Bold'; // فونت نئونی CiBL برای زبان‌های لاتین
+      return 'Orbitron-Bold';
   }
 };
