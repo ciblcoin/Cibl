@@ -65,3 +65,23 @@ const styles = StyleSheet.create({
 });
 
 export default SendScreen;
+
+import SliderConfirm from '../components/SliderConfirm';
+
+// در بدنه کد:
+const handleFinalConfirm = () => {
+  console.log("Transaction Initialized...");
+  // در اینجا تراکنش واقعی را با TransactionService ارسال کن
+};
+
+return (
+  <View>
+    {/* ... نمایش هزینه‌ها و فیلدها ... */}
+    
+    <SliderConfirm 
+      onConfirm={handleFinalConfirm} 
+      title="SLIDE TO SECURE SEND" 
+    />
+  </View>
+);
+
