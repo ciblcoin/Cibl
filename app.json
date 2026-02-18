@@ -133,3 +133,30 @@
     ]
   }
 }
+
+
+{
+  "expo": {
+    "name": "CiBL Wallet",
+    "slug": "cibl-wallet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "bundleIdentifier": "com.yourname.cibl",
+      "supportsTablet": false,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.yourname.cibl",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "permissions": ["CAMERA", "BIOMETRIC", "NOTIFICATIONS"]
+    }
+  }
+}
