@@ -547,3 +547,7 @@ useEffect(() => {
   NotifyService.registerForPushNotifications();
 }, []);
 
+import LogoCibl from './assets/logo-cibl.svg';
+
+// در صفحه Splash یا Dashboard
+<LogoCibl width={120} height={120} />
