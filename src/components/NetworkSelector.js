@@ -27,3 +27,78 @@ const BackButton = () => (
     />
   </TouchableOpacity>
 );
+
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { MotiView } from 'moti';
+
+const NETWORKS = [
+  { id: 'hyperevm', name: 'HyperEVM', color: '#6366F1', symbol: 'HYP' },
+  { id: 'polygon', name: 'Polygon', color: '#8247E5', symbol: 'MATIC' },
+  { id: 'avalanche', name: 'Avalanche', color: '#E84142', symbol: 'AVAX' },
+  { id: 'tron', name: 'Tron', color: '#FF0013', symbol: 'TRX' },
+  { id: 'cardano', name: 'Cardano', color: '#0033AD', symbol: 'ADA' },
+  { id: 'near', name: 'Near', color: '#000000', symbol: 'NEAR' },
+  { id: 'polkadot', name: 'Polkadot', color: '#E6007A', symbol: 'DOT' },
+  { id: 'bch', name: 'BCH Cash', color: '#8BC34A', symbol: 'BCH' },
+];
+
+const NetworkSelector = ({ onNetworkChange }) => {
+  const [selected, setSelected] = useState('hyperevm');
+
+  const handleSelect = (net) => {
+    setSelected(net.id);
+    onNetworkChange(net);
+  };
+
+  return (
+    <View style={styles.wrapper}>
+      <Text style={styles.header}>ACTIVE NETWORK</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.container}>
+        {NETWORKS.map((net) => {
+          const isActive = selected === net.id;
+          return (
+            <TouchableOpacity key={net.id} onPress={() => handleSelect(net)}>
+              <MotiView
+                animate={{
+                  backgroundColor: isActive ? net.color + '33' : '#0F172A',
+                  borderColor: isActive ? net.color : '#1E293B',
+                  scale: isActive ? 1.05 : 1,
+                }}
+                style={styles.pill}
+              >
+                {isActive && (
+                  <MotiView 
+                    from={{ scale: 0 }} 
+                    animate={{ scale: 1 }} 
+                    style={[styles.activeDot, { backgroundColor: net.color }]} 
+                  />
+                )}
+                <Text style={[styles.pillText, isActive && { color: '#fff' }]}>
+                  {net.name}
+                </Text>
+              </MotiView>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  wrapper: { marginTop: 25, marginBottom: 10 },
+  header: { 
+    fontFamily: 'Orbitron-Bold', color: '#475569', fontSize: 10, 
+    marginLeft: 20, marginBottom: 12, letterSpacing: 2 
+  },
+  container: { paddingLeft: 20, paddingRight: 20, gap: 12 },
+  pill: {
+    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, 
+    paddingVertical: 10, borderRadius: 15, borderWidth: 1, gap: 8
+  },
+  pillText: { fontFamily: 'Cairo-Bold', color: '#94A3B8', fontSize: 13 },
+  activeDot: { width: 6, height: 6, borderRadius: 3, shadowRadius: 4, shadowOpacity: 0.8 }
+});
+
+export default NetworkSelector;
