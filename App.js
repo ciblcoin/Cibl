@@ -409,3 +409,135 @@ export default function App() {
     </View>
   );
 }
+
+
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, LogBox } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+import { Audio } from 'expo-av'; // برای مدیریت صداهای نئونی
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StatusBar } from 'expo-status-bar';
+import { Wallet, MessageSquareCode, Shield, Zap } from 'lucide-react-native';
+
+// --- سرویس‌ها و ابزارهای داخلی ---
+import SecurityService from './src/utils/SecurityService';
+import WalletEngine from './src/utils/WalletEngine';
+import BiometricGuard from './src/components/BiometricGuard';
+
+// --- صفحات اپلیکیشن ---
+import OnboardingScreen from './src/screens/OnboardingScreen';
+import AssetsScreen from './src/screens/AssetsScreen';
+import CombatChatScreen from './src/screens/CombatChatScreen'; // بخش چت و چالش
+
+LogBox.ignoreAllLogs();
+SplashScreen.preventAutoHideAsync();
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+// --- بخش منوی پایینی (Main Tabs) ---
+function MainTabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { 
+          backgroundColor: '#000', 
+          borderTopColor: '#06b6d433', 
+          height: 70, 
+          paddingBottom: 10 
+        },
+        tabBarActiveTintColor: '#06b6d4',
+        tabBarInactiveTintColor: '#475569',
+      }}
+    >
+      <Tab.Screen 
+        name="Wallet" 
+        component={AssetsScreen} 
+        options={{ tabBarIcon: ({color}) => <Wallet color={color} size={24} /> }}
+      />
+      <Tab.Screen 
+        name="CombatChat" 
+        component={CombatChatScreen} 
+        options={{ 
+          tabBarLabel: 'Chat',
+          tabBarIcon: ({color}) => <MessageSquareCode color={color} size={24} /> 
+        }}
+      />
+      <Tab.Screen 
+        name="Security" 
+        component={View} // صفحه تنظیمات امنیتی
+        options={{ tabBarIcon: ({color}) => <Shield color={color} size={24} /> }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+// --- کامپوننت اصلی App ---
+export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState('Onboarding');
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // ۱. لود کردن فونت‌های نهایی (Static)
+        await Font.loadAsync({
+          'Orbitron-Bold': require('./assets/fonts/Orbitron-Bold.ttf'),
+          'Cairo-Bold': require('./assets/fonts/Cairo-Bold.ttf'),
+        });
+
+        // ۲. تنظیمات صدا (Audio)
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+
+        // ۳. بررسی وضعیت کیف‌پول در بلاک‌چین
+        const hasWallet = await SecurityService.hasWallet();
+        if (hasWallet) {
+          setInitialRoute('MainApp');
+        }
+
+      } catch (e) {
+        console.error("Initialization Error:", e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) return null;
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#000' }} onLayout={onLayoutRootView}>
+      <StatusBar style="light" />
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          
+          {/* مسیر ورود اول: Onboarding */}
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+
+          {/* مسیر اصلی: محافظت شده با لایه بیومتریک و شامل تب‌بار */}
+          <Stack.Screen name="MainApp">
+            {props => (
+              <BiometricGuard>
+                <MainTabNavigator {...props} />
+              </BiometricGuard>
+            )}
+          </Stack.Screen>
+
+        </Stack.Navigator>
+      </NavigationContainer>
+    </View>
+  );
+}
