@@ -96,3 +96,10 @@ const NetworkSelector = ({ onSelect }) => {
     />
   );
 };
+import * as Haptics from 'expo-haptics';
+
+const handlePress = (item) => {
+  // یک لرزش کوتاه و سبک
+  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  onSelect(item);
+};
