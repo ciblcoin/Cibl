@@ -551,3 +551,14 @@ import LogoCibl from './assets/logo-cibl.svg';
 
 // در صفحه Splash یا Dashboard
 <LogoCibl width={120} height={120} />
+
+import { ThemeProvider } from './src/context/ThemeContext';
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainNavigation />
+    </ThemeProvider>
+  );
+}
+
