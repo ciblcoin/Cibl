@@ -72,3 +72,30 @@ const styles = StyleSheet.create({
   },
   nextButtonText: { fontFamily: 'Orbitron-Bold', color: '#000', fontSize: 14 }
 });
+
+import { ethers } from 'ethers';
+import * as TronWeb from 'tronweb'; // برای ترون
+// سایر ایمپورت‌ها بر اساس نیاز نصب شوند
+
+export const deriveAllAddresses = (mnemonic) => {
+  const addresses = {};
+
+  // ۱. شبکه‌های سازگار با اتریوم (EVM) - Polygon, Avalanche, HyperEVM
+  // این‌ها همگی از یک فرمت آدرس (0x...) استفاده می‌کنند
+  const evmWallet = ethers.Wallet.fromPhrase(mnemonic);
+  addresses.EVM = evmWallet.address; 
+  addresses.Polygon = evmWallet.address;
+  addresses.Avalanche = evmWallet.address;
+  addresses.HyperEVM = evmWallet.address;
+
+  // ۲. شبکه ترون (Tron)
+  // آدرس‌های ترون با T شروع می‌شوند
+  const tronAddress = TronWeb.fromMnemonic(mnemonic); 
+  addresses.Tron = tronAddress.address;
+
+  // ۳. شبکه کاردانو (Cardano)
+  // نیاز به کتابخانه @emurgo/cardano-serialization-lib-nodejs دارد
+  addresses.Cardano = "باید با کتابخانه مخصوص جنریت شود";
+
+  return addresses;
+};
