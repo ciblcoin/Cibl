@@ -45,3 +45,19 @@ class SecurityService {
 }
 
 export default SecurityService;
+
+
+const handleFinalizeWallet = async (walletData) => {
+  const isSaved = await SecurityService.saveWallet(
+    walletData.phrase,
+    walletData.privateKey,
+    walletData.address
+  );
+
+  if (isSaved) {
+    // هدایت کاربر به داشبورد اصلی
+    navigation.replace('MainTabs');
+  } else {
+    alert("Security Vault Error. Please try again.");
+  }
+};
