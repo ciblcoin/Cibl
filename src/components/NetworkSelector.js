@@ -17,3 +17,13 @@ const isAr = i18n.language === 'ar';
      <ChevronRight size={20} style={{ transform: [{ scaleX: isAr ? -1 : 1 }] }} />
   </View>
 </TouchableOpacity>
+import { ChevronLeft } from 'lucide-react-native';
+
+const BackButton = () => (
+  <TouchableOpacity onPress={goBack}>
+    <ChevronLeft 
+      color="#06b6d4" 
+      style={{ transform: [{ scaleX: i18n.language === 'ar' ? -1 : 1 }] }} 
+    />
+  </TouchableOpacity>
+);
