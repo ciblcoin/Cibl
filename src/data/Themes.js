@@ -1,4 +1,5 @@
 export const Themes = {
+  // ۱. تم فیروزه‌ای نئونی (Cyberpunk)
   cyan: {
     id: 'cyan',
     primary: '#06b6d4',
@@ -7,8 +8,10 @@ export const Themes = {
     card: '#0F172A',
     text: '#FFFFFF',
     textMuted: '#94A3B8',
-    glow: 'rgba(6, 182, 212, 0.5)',
+    glow: 'rgba(6, 182, 212, 0.4)',
+    border: '#06b6d433'
   },
+  // ۲. تم ارغوانی (Synthwave)
   purple: {
     id: 'purple',
     primary: '#D946EF',
@@ -17,6 +20,31 @@ export const Themes = {
     card: '#1E1029',
     text: '#FFFFFF',
     textMuted: '#A78BFA',
-    glow: 'rgba(217, 70, 239, 0.5)',
+    glow: 'rgba(217, 70, 239, 0.4)',
+    border: '#D946EF33'
+  },
+  // ۳. تم تیره مطلق (Deep Dark - کلاسیک)
+  dark: {
+    id: 'dark',
+    primary: '#F8FAFC', // سفید مایل به آبی برای المان‌های اصلی
+    secondary: '#94A3B8',
+    background: '#020617', // مشکی بسیار عمیق
+    card: '#111827',
+    text: '#FFFFFF',
+    textMuted: '#64748B',
+    glow: 'rgba(248, 250, 252, 0.1)',
+    border: '#334155'
+  },
+  // ۴. تم روشن (Pure Light - روزانه)
+  light: {
+    id: 'light',
+    primary: '#0F172A', // مشکی برای دکمه‌ها و المان‌های اصلی
+    secondary: '#475569',
+    background: '#F1F5F9', // خاکستری بسیار روشن/سفید
+    card: '#FFFFFF',
+    text: '#0F172A',
+    textMuted: '#64748B',
+    glow: 'rgba(15, 23, 42, 0.05)',
+    border: '#E2E8F0'
   }
 };
