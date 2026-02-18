@@ -590,3 +590,42 @@ const MainApp = () => {
     </View>
   );
 };
+
+import React, { useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { NotifyService } from './src/utils/NotifyService';
+import MainNavigation from './src/navigation/MainNavigation'; // Your Nav Stack
+
+const CiBLApp = () => {
+  const { theme, isThemeLoading } = useTheme();
+
+  useEffect(() => {
+    // Initialize Push Notifications
+    NotifyService.registerForPushNotifications();
+  }, []);
+
+  if (isThemeLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#000', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#06b6d4" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <StatusBar style={theme.id === 'light' ? 'dark' : 'light'} />
+      <MainNavigation />
+    </View>
+  );
+};
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <CiBLApp />
+    </ThemeProvider>
+  );
+}
