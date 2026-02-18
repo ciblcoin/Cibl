@@ -295,3 +295,11 @@ await FeedbackManager.loadAll();
   }
 }
 
+return (
+  <BiometricGuard>
+    <NavigationContainer>
+      <MainStack />
+    </NavigationContainer>
+  </BiometricGuard>
+);
+
