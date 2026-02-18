@@ -159,3 +159,11 @@ const SettingsScreen = () => {
 };
 
 export default SettingsScreen;
+
+// در SettingsScreen.js
+<SettingItem 
+  icon={Languages} 
+  title={t('settings.language')} 
+  subtitle={languages.find(l => l.code === i18n.language)?.name}
+  onPress={() => setLanguageModalVisible(true)}
+/>
