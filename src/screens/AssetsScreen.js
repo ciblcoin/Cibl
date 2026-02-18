@@ -93,3 +93,23 @@ import { Helpers } from '../utils/Helpers';
 <Text style={styles.fiatText}>
   {Helpers.formatUSD(item.price)}
 </Text>
+
+{/* بخشی از مودال تایید تراکنش */}
+<View style={styles.feeContainer}>
+  <View style={styles.feeRow}>
+    <Text style={styles.feeLabel}>Network Fee (Gas)</Text>
+    <Text style={styles.feeValue}>{fees.networkFee} ETH</Text>
+  </View>
+  
+  <View style={styles.feeRow}>
+    <Text style={styles.feeLabel}>CiBL Service Fee</Text>
+    <Text style={[styles.feeValue, {color: '#06b6d4'}]}>{fees.platformFee} ETH</Text>
+  </View>
+
+  <View style={styles.divider} />
+
+  <View style={styles.feeRow}>
+    <Text style={styles.totalLabel}>Total Deducted</Text>
+    <Text style={styles.totalValue}>{fees.totalCost} ETH</Text>
+  </View>
+</View>
