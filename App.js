@@ -315,3 +315,97 @@ export const theme = {
     glow: 'rgba(0, 255, 65, 0.5)',
   }
 };
+
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, LogBox } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar } from 'expo-status-bar';
+
+// وارد کردن سرویس‌ها و کامپوننت‌هایی که با هم ساختیم
+import SecurityService from './src/utils/SecurityService';
+import BiometricGuard from './src/components/BiometricGuard';
+import OnboardingScreen from './src/screens/OnboardingScreen';
+import AssetsScreen from './src/screens/AssetsScreen';
+
+// جلوگیری از نمایش هشدارهای غیرضروری در اپلیکیشن نهایی
+LogBox.ignoreAllLogs();
+
+// نگه داشتن اسپلش اسکرین تا لود شدن کامل منابع
+SplashScreen.preventAutoHideAsync();
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState('Onboarding');
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // ۱. لود کردن فونت‌های استاتیک (Orbitron و Cairo)
+        await Font.loadAsync({
+          'Orbitron-Bold': require('./assets/fonts/Orbitron-Bold.ttf'),
+          'Orbitron-Regular': require('./assets/fonts/Orbitron-Regular.ttf'),
+          'Cairo-Bold': require('./assets/fonts/Cairo-Bold.ttf'),
+          'Cairo-Regular': require('./assets/fonts/Cairo-Regular.ttf'),
+        });
+
+        // ۲. چک کردن وضعیت کاربر (آیا قبلاً کیف‌پول ساخته است؟)
+        const hasWallet = await SecurityService.hasWallet();
+        if (hasWallet) {
+          setInitialRoute('MainApp');
+        }
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      // پنهان کردن اسپلش اسکرین وقتی همه چیز آماده است
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
+  return (
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <StatusBar style="light" />
+      <NavigationContainer>
+        <Stack.Navigator 
+          initialRouteName={initialRoute}
+          screenOptions={{
+            headerShown: false,
+            cardStyle: { backgroundColor: '#000' }
+          }}
+        >
+          {/* صفحه ورود برای کاربران جدید */}
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+
+          {/* بخش اصلی اپلیکیشن محافظت شده با قفل بیومتریک */}
+          <Stack.Screen name="MainApp">
+            {props => (
+              <BiometricGuard>
+                <AssetsScreen {...props} />
+              </BiometricGuard>
+            )}
+          </Stack.Screen>
+
+        </Stack.Navigator>
+      </NavigationContainer>
+    </View>
+  );
+}
