@@ -121,3 +121,118 @@ const handleTranslate = async () => {
   setIsTranslated(true);
 };
 
+import React, { useState } from 'react';
+import { View, Text, TextInput, FlatList, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import { CiBLIcon, ICONS } from '../utils/Icons';
+import { InteractionService } from '../utils/InteractionService';
+
+const CombatChat = () => {
+  const { theme } = useTheme();
+  const [messages, setMessages] = useState([
+    { id: '1', text: 'SYSTEM: Connection established via CiBL-Protocol', type: 'system' },
+    { id: '2', text: 'Hey, did you secure the bridge on HyperEVM?', type: 'received' },
+  ]);
+  const [inputText, setInputText] = useState('');
+
+  const sendMessage = () => {
+    if (inputText.trim() === '') return;
+    
+    // اجرای افکت صوتی مخصوص تم هنگام ارسال پیام
+    InteractionService.playInteraction(theme);
+
+    const newMessage = { id: Date.now().toString(), text: inputText, type: 'sent' };
+    setMessages([newMessage, ...messages]);
+    setInputText('');
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={[
+      styles.messageBubble, 
+      item.type === 'sent' ? 
+      { alignSelf: 'flex-end', backgroundColor: theme.primary + '22', borderColor: theme.primary } : 
+      styles.receivedBubble,
+      item.type === 'system' && styles.systemBubble
+    ]}>
+      <Text style={[
+        styles.messageText, 
+        { color: item.type === 'sent' ? theme.primary : theme.text },
+        item.type === 'system' && { color: theme.textMuted, fontSize: 10 }
+      ]}>
+        {item.type === 'sent' ? '> ' : ''}{item.text}
+      </Text>
+    </View>
+  );
+
+  return (
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
+      <FlatList
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        inverted // برای نمایش پیام‌های جدید در پایین
+        contentContainerStyle={styles.listContent}
+      />
+
+      <View style={[styles.inputContainer, { borderTopColor: theme.border, backgroundColor: theme.card }]}>
+        <TextInput
+          style={[styles.input, { color: theme.text }]}
+          placeholder="ENTER COMMAND OR MESSAGE..."
+          placeholderTextColor={theme.textMuted}
+          value={inputText}
+          onChangeText={setInputText}
+        />
+        <CiBLIcon 
+          name={ICONS.SEND} 
+          size={24} 
+          onPress={sendMessage} 
+          style={{ marginLeft: 10 }}
+        />
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  listContent: { padding: 20 },
+  messageBubble: {
+    padding: 12,
+    borderRadius: 5,
+    borderLeftWidth: 3,
+    marginBottom: 10,
+    maxWidth: '80%',
+  },
+  receivedBubble: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderColor: '#94A3B8',
+  },
+  systemBubble: {
+    alignSelf: 'center',
+    backgroundColor: 'transparent',
+    borderLeftWidth: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  messageText: { fontFamily: 'Courier', fontSize: 14 }, // استفاده از فونت ماشین‌تحریر
+  inputContainer: {
+    flexDirection: 'row',
+    padding: 15,
+    alignItems: 'center',
+    borderTopWidth: 1,
+  },
+  input: { flex: 1, fontFamily: 'Orbitron-Bold', fontSize: 12 },
+});
+
+export default CombatChat;
+
+// یک ایده برای نمایش پیام‌های سیستم
+const SystemMessage = ({ text }) => {
+  const { theme } = useTheme();
+  // منطق انیمیشن تایپ قطره‌چکانی حروف...
+  return <Text style={{ color: theme.textMuted }}>[LOAD]: {text}</Text>;
+};
