@@ -51,3 +51,20 @@ export const ICONS = {
   ERROR: 'CircleAlert',
   NETWORK: 'Globe'
 };
+
+import { CiBLIcon, ICONS } from '../utils/Icons';
+
+const Dashboard = () => {
+  return (
+    <View>
+      {/* آیکون ارسال با رنگ خودکار تم */}
+      <CiBLIcon name={ICONS.SEND} size={30} />
+      
+      {/* آیکون چت مخصوص CiBL */}
+      <CiBLIcon name={ICONS.CHAT} />
+      
+      {/* اگر بخواهی در جای خاصی رنگ را دستی تغییر دهی */}
+      <CiBLIcon name={ICONS.ERROR} color="#ff4444" />
+    </View>
+  );
+};
