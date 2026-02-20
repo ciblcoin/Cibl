@@ -117,3 +117,82 @@ const styles = StyleSheet.create({
 });
 
 export default SeedPhraseScreen;
+
+
+
+
+
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import { SecurityService } from '../utils/SecurityService'; // سرویس امنیتی ما
+import CiblButton from '../components/CiblButton';
+import { CiBLIcon, ICONS } from '../utils/Icons';
+
+const SeedPhraseScreen = () => {
+  const { theme } = useTheme();
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const seedPhrase = ["neon", "bridge", "crypto", "quantum", "layer", "secure", "alpha", "void", "binary", "matrix", "cyber", "node"];
+
+  const handleSecurityCheck = async () => {
+    // ۱. فراخوانی FaceID یا اثر انگشت
+    const success = await SecurityService.authenticate(theme);
+    
+    if (success) {
+      setIsUnlocked(true);
+    } else {
+      Alert.alert("SECURITY_ALERT", "IDENTITY VERIFICATION FAILED. ACCESS DENIED.");
+    }
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <View style={styles.header}>
+        <CiBLIcon name={ICONS.KEYS} size={50} color={theme.primary} />
+        <Text style={[styles.title, { color: theme.text }]}>RECOVERY_VAULT</Text>
+      </View>
+
+      {!isUnlocked ? (
+        // حالت قفل: کاربر باید ابتدا هویت خود را تایید کند
+        <View style={styles.lockedContainer}>
+          <Text style={[styles.lockDesc, { color: theme.textMuted }]}>
+            THE SEED PHRASE IS ENCRYPTED. PROVIDE BIO-SIGNATURE TO DECRYPT.
+          </Text>
+          <CiblButton 
+            title="AUTHENTICATE" 
+            onPress={handleSecurityCheck} 
+          />
+        </View>
+      ) : (
+        // حالت باز: کلمات نمایش داده می‌شوند (با همان استایل قبلی)
+        <View style={styles.grid}>
+          {seedPhrase.map((word, index) => (
+            <View key={index} style={[styles.wordCard, { backgroundColor: theme.card, borderColor: theme.primary }]}>
+              <Text style={styles.indexText}>{index + 1}</Text>
+              <Text style={[styles.wordText, { color: theme.text }]}>{word}</Text>
+            </View>
+          ))}
+          <Text style={[styles.warningText, { color: '#ff4444' }]}>
+            WRITE THESE DOWN OFFLINE. NEVER TAKE A SCREENSHOT.
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 25, justifyContent: 'center' },
+  header: { alignItems: 'center', marginBottom: 50 },
+  title: { fontFamily: 'Orbitron-Bold', fontSize: 18, marginTop: 15, letterSpacing: 3 },
+  lockedContainer: { alignItems: 'center' },
+  lockDesc: { fontFamily: 'Courier', textAlign: 'center', marginBottom: 30, fontSize: 12 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  wordCard: { width: '31%', padding: 12, borderRadius: 8, borderWidth: 1, marginBottom: 15, alignItems: 'center' },
+  indexText: { position: 'absolute', top: 2, left: 4, fontSize: 8, color: '#64748B' },
+  wordText: { fontFamily: 'Courier', fontSize: 14, fontWeight: 'bold' },
+  warningText: { fontFamily: 'Orbitron-Bold', fontSize: 9, textAlign: 'center', width: '100%', marginTop: 20 }
+});
+
+export default SeedPhraseScreen;
+
