@@ -77,3 +77,79 @@ const NftGallery = ({ onClose }) => {
     </View>
   );
 };
+
+
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+
+const { width } = Dimensions.get('window');
+const COLUMN_WIDTH = width / 2 - 30;
+
+const NFT_DATA = [
+  { id: '1', name: 'Cyber Neon #01', collection: 'CiBL Origins', price: '0.5 ETH', uri: 'https://placeholder.com/nft1' },
+  { id: '2', name: 'Matrix Void', collection: 'Deep Link', price: '1.2 ETH', uri: 'https://placeholder.com/nft2' },
+  { id: '3', name: 'Quantum Pulse', collection: 'CiBL Origins', price: '0.8 ETH', uri: 'https://placeholder.com/nft3' },
+  { id: '4', name: 'Neural Drifter', collection: 'Glitch City', price: '2.5 ETH', uri: 'https://placeholder.com/nft4' },
+];
+
+const NFTGallery = () => {
+  const { theme } = useTheme();
+
+  const renderNFT = ({ item }) => (
+    <View style={[styles.nftCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <View style={styles.imagePlaceholder}>
+         {/* در پروژه واقعی از <Image source={{uri: item.uri}} /> استفاده می‌شود */}
+         <View style={[styles.mockImage, { backgroundColor: theme.primary + '30' }]}>
+            <Text style={{color: theme.primary, fontFamily: 'Orbitron-Bold'}}>NFT_IMG</Text>
+         </View>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={[styles.nftName, { color: theme.text }]}>{item.name}</Text>
+        <Text style={[styles.collectionName, { color: theme.textMuted }]}>{item.collection}</Text>
+        <View style={[styles.priceTag, { backgroundColor: theme.primary }]}>
+          <Text style={styles.priceText}>{item.price}</Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.header, { color: theme.text }]}>DIGITAL_COLLECTIBLES</Text>
+      <FlatList
+        data={NFT_DATA}
+        renderItem={renderNFT}
+        keyExtractor={item => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.columnWrapper}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 60 },
+  header: { fontFamily: 'Orbitron-Bold', fontSize: 16, textAlign: 'center', marginBottom: 20, letterSpacing: 2 },
+  listContent: { paddingHorizontal: 20 },
+  columnWrapper: { justifyContent: 'space-between' },
+  nftCard: {
+    width: COLUMN_WIDTH,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginBottom: 20,
+    overflow: 'hidden',
+    elevation: 5,
+  },
+  imagePlaceholder: { width: '100%', height: COLUMN_WIDTH, padding: 10 },
+  mockImage: { flex: 1, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  infoContainer: { padding: 12 },
+  nftName: { fontFamily: 'Cairo-Bold', fontSize: 13 },
+  collectionName: { fontFamily: 'Courier', fontSize: 10, marginTop: 4 },
+  priceTag: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, marginTop: 10 },
+  priceText: { fontSize: 10, fontFamily: 'Orbitron-Bold', color: '#000' }
+});
+
+export default NFTGallery;
