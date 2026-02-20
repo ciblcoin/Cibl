@@ -61,3 +61,31 @@ const handleFinalizeWallet = async (walletData) => {
     alert("Security Vault Error. Please try again.");
   }
 };
+
+import * as LocalAuthentication from 'expo-local-authentication';
+import { InteractionService } from './InteractionService';
+
+export const SecurityService = {
+  // بررسی اینکه آیا گوشی قابلیت بیومتریک دارد یا خیر
+  checkHardware: async () => {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+    return hasHardware && isEnrolled;
+  },
+
+  // اجرای فرآیند احراز هویت
+  authenticate: async (theme) => {
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: 'BIO-ENCRYPTION KEY REQUIRED',
+      fallbackLabel: 'USE PASSCODE',
+      disableDeviceFallback: false,
+    });
+
+    if (result.success) {
+      // پخش صدای موفقیت و لرزش
+      InteractionService.playInteraction(theme);
+      return true;
+    }
+    return false;
+  }
+};
