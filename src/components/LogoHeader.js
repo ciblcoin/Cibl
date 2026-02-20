@@ -66,3 +66,15 @@ const styles = StyleSheet.create({
 });
 
 export default LogoHeader;
+
+
+const LogoHeader = () => {
+  const { unlockMatrix, toggleTheme } = useTheme();
+
+  const handleSecretTrigger = () => {
+    unlockMatrix(); // باز کردن قفل دائمی
+    toggleTheme('matrix'); // سوییچ آنی به تم ماتریکس
+  };
+
+  // ... همان منطق ۵ کلیک قبلی که handleSecretTrigger را صدا می‌زند
+};
