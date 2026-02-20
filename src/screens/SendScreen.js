@@ -131,3 +131,23 @@ const handleFinalConfirm = async () => {
     await NotifyService.sendTxSuccess(amount, selectedNet.symbol);
   }
 };
+import CiblButton from '../components/CiblButton';
+
+const SendScreen = () => {
+  return (
+    <View>
+      {/* دکمه اصلی */}
+      <CiblButton 
+        title="Confirm Transaction" 
+        onPress={() => console.log('Sent!')} 
+      />
+
+      {/* دکمه با استایل توخالی */}
+      <CiblButton 
+        title="Cancel" 
+        variant="outline" 
+        onPress={() => navigation.goBack()} 
+      />
+    </View>
+  );
+};
