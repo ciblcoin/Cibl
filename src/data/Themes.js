@@ -133,3 +133,21 @@ export const Themes = {
     sound: require('../../assets/sounds/light-tap.mp3'),
   }
 };
+export const Themes = {
+  // ... تم‌های قبلی (cyan, purple, dark, light) ...
+  
+  matrix: {
+    id: 'matrix',
+    name: 'Matrix Code',
+    primary: '#00FF41', // سبز مشهور ماتریکس
+    secondary: '#008F11',
+    background: '#0D0208', // مشکی متمایل به سبز تیره
+    card: '#003B00',
+    text: '#00FF41',
+    textMuted: '#008F11',
+    glow: 'rgba(0, 255, 65, 0.4)',
+    border: '#00FF41',
+    hapticType: Haptics.ImpactFeedbackStyle.Heavy,
+    sound: require('../../assets/sounds/matrix-glitch.mp3'),
+  }
+};
