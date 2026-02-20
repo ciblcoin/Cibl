@@ -657,3 +657,22 @@ const AppContainer = () => {
     </View>
   );
 };
+
+import React, { useState } from 'react';
+import SplashScreen from './src/screens/SplashScreen';
+import WalletDashboard from './src/screens/WalletDashboard';
+import { ThemeProvider } from './src/context/ThemeContext';
+
+export default function App() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <ThemeProvider>
+      {!isLoaded ? (
+        <SplashScreen onFinish={() => setIsLoaded(true)} />
+      ) : (
+        <WalletDashboard />
+      )}
+    </ThemeProvider>
+  );
+}
