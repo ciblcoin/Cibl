@@ -676,3 +676,19 @@ export default function App() {
     </ThemeProvider>
   );
 }
+
+// App.js
+import React from 'react';
+import { ThemeProvider } from './src/context/ThemeContext';
+import { NetworkProvider } from './src/context/NetworkContext';
+import MainNavigator from './src/navigation/MainNavigator';
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <NetworkProvider>
+        <MainNavigator />
+      </NetworkProvider>
+    </ThemeProvider>
+  );
+}
