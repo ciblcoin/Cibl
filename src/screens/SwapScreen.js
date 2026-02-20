@@ -68,3 +68,130 @@ const SwapScreen = () => {
     </View>
   );
 };
+
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  Easing,
+  interpolate
+} from 'react-native-reanimated';
+import { useTheme } from '../context/ThemeContext';
+import { CiBLIcon, ICONS } from '../utils/Icons';
+import CiblButton from '../components/CiblButton';
+
+const SwapScreen = () => {
+  const { theme } = useTheme();
+  const [loading, setLoading] = useState(false);
+  const rotation = useSharedValue(0);
+
+  // انیمیشن چرخش رآکتور
+  const startSwapAnimation = () => {
+    setLoading(true);
+    rotation.value = withRepeat(
+      withTiming(1, { duration: 1500, easing: Easing.linear }),
+      -1 // چرخش بی‌پایان تا زمان اتمام عملیات
+    );
+
+    // شبیه‌سازی پایان تراکنش بعد از ۳ ثانیه
+    setTimeout(() => {
+      setLoading(false);
+      rotation.value = 0;
+    }, 3500);
+  };
+
+  const reactorStyle = useAnimatedStyle(() => {
+    const rotateValue = interpolate(rotation.value, [0, 1], [0, 360]);
+    return {
+      transform: [{ rotate: `${rotateValue}deg` }],
+    };
+  });
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text }]}>ATOMIC_SWAP</Text>
+
+      {/* بخش ورودی ارزها */}
+      <View style={[styles.swapCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <SwapInput label="FROM" asset="ETH" amount="1.25" />
+        
+        {/* رآکتور مرکزی (انیمیشن چرخشی) */}
+        <View style={styles.reactorContainer}>
+          <View style={[styles.connector, { backgroundColor: theme.border }]} />
+          <Animated.View style={[styles.reactorFrame, reactorStyle, { borderColor: theme.primary }]}>
+            <CiBLIcon name={ICONS.SWAP} size={24} color={theme.primary} />
+          </Animated.View>
+          <View style={[styles.connector, { backgroundColor: theme.border }]} />
+        </View>
+
+        <SwapInput label="TO" asset="HYP" amount="485.20" />
+      </View>
+
+      {/* اطلاعات قیمت */}
+      <View style={styles.infoRow}>
+        <Text style={{ color: theme.textMuted, fontFamily: 'Courier' }}>EXCHANGE_RATE:</Text>
+        <Text style={{ color: theme.primary, fontFamily: 'Orbitron-Bold' }}>1 ETH = 388 HYP</Text>
+      </View>
+
+      <CiblButton 
+        title={loading ? "INITIATING..." : "EXECUTE SWAP"} 
+        onPress={startSwapAnimation}
+        loading={loading}
+      />
+    </View>
+  );
+};
+
+// کامپوننت کمکی برای اینپوت‌های سوآپ
+const SwapInput = ({ label, asset, amount }) => {
+  const { theme } = useTheme();
+  return (
+    <View style={styles.inputBox}>
+      <Text style={[styles.inputLabel, { color: theme.textMuted }]}>{label}</Text>
+      <View style={styles.inputRow}>
+        <TextInput 
+          style={[styles.textInput, { color: theme.text }]} 
+          value={amount} 
+          keyboardType="numeric"
+        />
+        <TouchableOpacity style={[styles.assetPicker, { backgroundColor: theme.primary + '20' }]}>
+          <Text style={{ color: theme.primary, fontFamily: 'Orbitron-Bold' }}>{asset}</Text>
+          <CiBLIcon name="ChevronDown" size={16} color={theme.primary} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 25, paddingTop: 60 },
+  title: { fontFamily: 'Orbitron-Bold', fontSize: 20, marginBottom: 30, textAlign: 'center' },
+  swapCard: { borderRadius: 24, borderWidth: 1, padding: 20 },
+  inputBox: { marginVertical: 10 },
+  inputLabel: { fontFamily: 'Orbitron-Bold', fontSize: 9, marginBottom: 8 },
+  inputRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  textInput: { fontSize: 24, fontFamily: 'Orbitron-Bold', flex: 1 },
+  assetPicker: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12 },
+  reactorContainer: { alignItems: 'center', marginVertical: -10, zIndex: 10 },
+  connector: { width: 2, height: 20 },
+  reactorFrame: { 
+    width: 60, 
+    height: 60, 
+    borderRadius: 30, 
+    borderWidth: 2, 
+    borderStyle: 'dashed',
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor: '#0D0208',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 10
+  },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 25, paddingHorizontal: 5 }
+});
+
+export default SwapScreen;
