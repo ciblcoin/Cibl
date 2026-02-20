@@ -629,3 +629,31 @@ export default function App() {
     </ThemeProvider>
   );
 }
+import React from 'react';
+import { View } from 'react-native';
+import { useTheme } from './src/context/ThemeContext';
+import LogoHeader from './src/components/LogoHeader';
+
+const AppContainer = () => {
+  const { toggleTheme, theme } = useTheme();
+
+  const unlockSecretMatrix = () => {
+    // تغییر تم به ماتریکس
+    toggleTheme('matrix');
+    
+    // می‌توانید اینجا یک Alert یا افکت تصویری خاص هم بگذارید
+    console.log("SYSTEM BREACH: ACCESS GRANTED.");
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      {/* هدر را در بالای صفحه قرار می‌دهیم */}
+      <View style={{ height: 100, justifyContent: 'center', alignItems: 'center' }}>
+        <LogoHeader onUnlockMatrix={unlockSecretMatrix} />
+      </View>
+      
+      {/* بقیه اجزای اپلیکیشن */}
+      <MainNavigation />
+    </View>
+  );
+};
