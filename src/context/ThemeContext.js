@@ -87,3 +87,33 @@ export const ThemeProvider = ({ children }) => {
 
 export const useTheme = () => useContext(ThemeContext);
 
+// ... سایر ایمپورت‌ها
+const MATRIX_UNLOCKED_KEY = '@cibl_matrix_unlocked';
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState(Themes.cyan);
+  const [isMatrixUnlocked, setIsMatrixUnlocked] = useState(false);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const savedThemeId = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+      const matrixStatus = await AsyncStorage.getItem(MATRIX_UNLOCKED_KEY);
+      
+      if (savedThemeId) setTheme(Themes[savedThemeId]);
+      if (matrixStatus === 'true') setIsMatrixUnlocked(true);
+    };
+    loadSettings();
+  }, []);
+
+  const unlockMatrix = async () => {
+    setIsMatrixUnlocked(true);
+    await AsyncStorage.setItem(MATRIX_UNLOCKED_KEY, 'true');
+  };
+
+  // ... بقیه توابع
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme, isMatrixUnlocked, unlockMatrix }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
