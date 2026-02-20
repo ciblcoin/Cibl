@@ -131,3 +131,65 @@ const styles = StyleSheet.create({
 });
 
 export default WalletDashboard;
+
+
+import React, { useState, useEffect } from 'react';
+// ... بقیه ایمپورت‌ها
+import { BlockchainService } from '../utils/BlockchainService';
+
+const WalletDashboard = () => {
+  const { theme } = useTheme();
+  const [loading, setLoading] = useState(true);
+  const [balances, setBalances] = useState({ eth: 0, sol: 0, hyp: 0 });
+  const [prices, setPrices] = useState({ ethereum: { usd: 0 }, solana: { usd: 0 } });
+
+  const refreshData = async () => {
+    setLoading(true);
+    
+    // ۱. دریافت قیمت‌ها و موجودی به صورت موازی
+    const [priceData, balanceData] = await Promise.all([
+      BlockchainService.getPrices(),
+      BlockchainService.getWalletBalance("0x7aC...A94e2")
+    ]);
+
+    if (priceData) setPrices(priceData);
+    if (balanceData) setBalances(balanceData);
+    
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    refreshData();
+  }, []);
+
+  // محاسبه مجموع دارایی به دلار
+  const totalUSD = (
+    (balances.eth * prices.ethereum.usd) + 
+    (balances.sol * prices.solana.usd) + 
+    (balances.hyp * 1.0) // فرض بر اینکه HYP یک استیبل کوین است
+  ).toLocaleString();
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* موجودی کل داینامیک */}
+      <View style={styles.balanceContainer}>
+        <Text style={[styles.label, { color: theme.textMuted }]}>TOTAL ASSETS (LIVE)</Text>
+        <Text style={[styles.balanceText, { color: theme.text }]}>
+          {loading ? "LOADING..." : `$${totalUSD}`}
+        </Text>
+      </View>
+
+      {/* لیست ارزها با قیمت واقعی */}
+      <AssetItem 
+        name="Ethereum" 
+        symbol="ETH" 
+        balance={balances.eth} 
+        value={`$${(balances.eth * prices.ethereum.usd).toFixed(2)}`} 
+        icon="Layers" 
+      />
+      {/* ... بقیه ارزها */}
+      
+      <CiblButton title="REFRESH SYSTEM" onPress={refreshData} loading={loading} />
+    </View>
+  );
+};
