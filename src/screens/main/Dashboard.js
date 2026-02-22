@@ -126,3 +126,63 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
+
+
+const Dashboard = ({ navigation }) => {
+  const { theme } = useTheme();
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      
+      {/* هدر اصلاح شده با اتصالات کامل */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          {/* ۱. اتصال لوگو و نام به نمایش جزئیات کیف پول */}
+          <TouchableOpacity 
+            style={styles.walletInfoRow} 
+            onPress={() => navigation.navigate('WalletDetails')}
+          >
+            <View style={[styles.pixelLogo, { backgroundColor: theme.primary }]}>
+               <Text style={styles.pixelText}>C</Text>
+            </View>
+            <View>
+              <Text style={[styles.walletName, { color: theme.text }]}>BLMO</Text>
+              <Text style={[styles.walletAddress, { color: theme.textMuted }]}>@BLMO</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.headerRight}>
+          {/* ۲. دکمه تاریخچه (ساعت) طبق تصویر ارسالی */}
+          <TouchableOpacity 
+            style={styles.headerIconBtn} 
+            onPress={() => navigation.navigate('History')}
+          >
+            <CiBLIcon name="Clock" size={22} color={theme.text} />
+          </TouchableOpacity>
+
+          {/* ۳. دکمه جستجو یا اسکنر */}
+          <TouchableOpacity 
+            style={styles.headerIconBtn} 
+            onPress={() => navigation.navigate('Scanner')}
+          >
+            <CiBLIcon name="Search" size={22} color={theme.text} />
+          </TouchableOpacity>
+
+          {/* ۴. اتصال دکمه منو به دراور (Drawer) */}
+          <TouchableOpacity 
+            style={styles.headerIconBtn} 
+            onPress={() => navigation.openDrawer()}
+          >
+            <CiBLIcon name="Menu" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* مابقی بدنه که قبلاً طراحی کردیم */}
+      <PageBody>
+         {/* ... */}
+      </PageBody>
+    </View>
+  );
+};
