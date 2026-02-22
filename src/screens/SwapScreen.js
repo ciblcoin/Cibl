@@ -195,3 +195,17 @@ const styles = StyleSheet.create({
 });
 
 export default SwapScreen;
+
+// نمونه کد برای هدر صفحات داخلی (مثل SwapScreen.js)
+const Header = ({ title, navigation }) => {
+  const { theme } = useTheme();
+  return (
+    <View style={styles.header}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <CiBLIcon name="ChevronLeft" size={28} color={theme.primary} />
+      </TouchableOpacity>
+      <Text style={[styles.headerTitle, { color: theme.text }]}>{title}</Text>
+      <View style={{ width: 28 }} /> {/* برای بالانس شدن عنوان در وسط */}
+    </View>
+  );
+};
