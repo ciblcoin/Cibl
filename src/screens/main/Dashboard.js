@@ -238,3 +238,12 @@ const styles = StyleSheet.create({
     padding: 5,
   }
 });
+
+
+// در فایل Dashboard.js
+<TouchableOpacity 
+  style={[styles.chatFloatingBtn, { backgroundColor: theme.primary }]}
+  onPress={() => navigation.navigate('ChatRoom')} // یا باز کردن دراور اختصاصی چت
+>
+  <CiBLIcon name="MessageSquare" size={24} color="#000" />
+</TouchableOpacity>
