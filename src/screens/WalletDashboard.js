@@ -295,3 +295,29 @@ const WalletDashboard = ({ navigation }) => {
     </View>
   );
 };
+
+
+const WalletDashboard = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const loadData = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      await refreshData(); // تابعی که قبلاً نوشتیم
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (error) {
+    return <ErrorState message={error} onRetry={loadData} />;
+  }
+
+  return (
+    // محتویات اصلی داشبورد
+  );
+};
