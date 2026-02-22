@@ -43,3 +43,23 @@ const MainNavigator = () => {
 };
 
 export default MainNavigator;
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import CiblTabBar from './CiblTabBar';
+
+const Tab = createBottomTabNavigator();
+
+const TabNavigator = () => {
+  return (
+    <Tab.Navigator
+      tabBar={props => <CiblTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen name="Home" component={WalletDashboard} />
+      <Tab.Screen name="Swap" component={SwapScreen} />
+      <Tab.Screen name="NFTs" component={NFTGallery} />
+      <Tab.Screen name="Settings" component={NetworkSettings} />
+    </Tab.Navigator>
+  );
+};
+
