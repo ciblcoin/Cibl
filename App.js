@@ -691,4 +691,23 @@ export default function App() {
       </NetworkProvider>
     </ThemeProvider>
   );
+}// App.js یا هر Screen
+import MatrixRain from './src/components/MatrixRain';
+// ... بقیه ایمپورت‌ها
+
+export default function App() {
+  const { theme } = useTheme(); // برای دسترسی به تم
+
+  return (
+    <ThemeProvider>
+      <NetworkProvider>
+        <NavigationContainer>
+          <MatrixRain /> {/* این را اینجا قرار می‌دهیم تا همیشه در پس‌زمینه باشد */}
+          <MainNavigator />
+          {/* ... بقیه کامپوننت‌ها */}
+        </NavigationContainer>
+      </NetworkProvider>
+    </ThemeProvider>
+  );
 }
+
