@@ -255,3 +255,43 @@ const WalletDashboard = ({ navigation }) => {
     </View>
   );
 };
+
+
+// ... سایر ایمپورت‌ها
+import CiblChart from '../components/CiblChart';
+import PageBody from '../components/PageBody'; // استفاده از کامپوننت PageBody
+
+const WalletDashboard = ({ navigation }) => {
+  // ... سایر استیت‌ها و توابع
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* هدر بالایی با قابلیت Easter Egg */}
+      <View style={styles.headerRow}>
+        <LogoHeader onUnlockMatrix={() => console.log("Matrix Unlocked!")} />
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <CiblAvatar address={walletData.address} size={40} />
+        </TouchableOpacity>
+      </View>
+
+      <PageBody> {/* اینجا از PageBody استفاده می‌کنیم */}
+        {/* بخش موجودی کل */}
+        {/* ... */}
+
+        {/* دکمه‌های عملیاتی سریع (Quick Actions) */}
+        {/* ... */}
+
+        {/* نمودار قیمت */}
+        <CiblChart assetName="Ethereum" data={[]} /> {/* اینجا نمودار اضافه می‌شود */}
+        
+        {/* بخش لیست ارزها (Assets) */}
+        <View style={[styles.assetsCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>MY ASSETS</Text>
+          
+          <AssetItem name="Ethereum" symbol="ETH" balance="1.42" value="$3,200.12" icon="Layers" />
+          {/* ... بقیه AssetItem ها */}
+        </View>
+      </PageBody>
+    </View>
+  );
+};
