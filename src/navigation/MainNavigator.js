@@ -72,3 +72,24 @@ import ImportWallet from '../screens/onboarding/ImportWallet';
 <Stack.Screen name="Welcome" component={WelcomeScreen} />
 <Stack.Screen name="CreateWallet" component={CreateWallet} />
 <Stack.Screen name="ImportWallet" component={ImportWallet} />
+
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import Dashboard from '../screens/main/Dashboard';
+import ProfileSettings from '../screens/main/ProfileSettings'; // فرض بر وجود این صفحه
+
+const Drawer = createDrawerNavigator();
+
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator 
+      screenOptions={{ 
+        headerShown: false,
+        drawerPosition: 'right', // منو از سمت راست باز شود (طبق طرح شما)
+        drawerStyle: { width: '80%', backgroundColor: '#000' }
+      }}
+    >
+      <Drawer.Screen name="MainDashboard" component={Dashboard} />
+      <Drawer.Screen name="Profile" component={ProfileSettings} />
+    </Drawer.Navigator>
+  );
+};
