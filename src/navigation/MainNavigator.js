@@ -63,3 +63,12 @@ const TabNavigator = () => {
   );
 };
 
+
+import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
+import CreateWallet from '../screens/onboarding/CreateWallet';
+import ImportWallet from '../screens/onboarding/ImportWallet';
+
+// در داخل Stack.Navigator:
+<Stack.Screen name="Welcome" component={WelcomeScreen} />
+<Stack.Screen name="CreateWallet" component={CreateWallet} />
+<Stack.Screen name="ImportWallet" component={ImportWallet} />
