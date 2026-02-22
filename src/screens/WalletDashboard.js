@@ -193,3 +193,65 @@ const WalletDashboard = () => {
     </View>
   );
 };
+
+// ... سایر ایمپورت‌ها
+import { useTheme } from '../context/ThemeContext';
+import { InteractionService } from '../utils/InteractionService';
+
+const WalletDashboard = ({ navigation }) => {
+  const { theme } = useTheme();
+
+  // تابع کمکی برای جابجایی همراه با صدا و لرزش
+  const navigateTo = (screenName) => {
+    InteractionService.playInteraction(theme); // پخش صدای کلیک (مثلاً صدای ماتریکس)
+    navigation.navigate(screenName);
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* ... هدر و موجودی */}
+
+      {/* بخش دکمه‌های عملیاتی (Quick Actions) */}
+      <View style={styles.actionRow}>
+        <View style={styles.actionItem}>
+          <CiblButton 
+            variant="primary" 
+            style={styles.roundBtn} 
+            onPress={() => navigateTo('Swap')} // اتصال به صفحه سوآپ
+            title={<CiBLIcon name={ICONS.SWAP} size={24} color={theme.id === 'light' ? '#FFF' : '#000'} />}
+          />
+          <Text style={[styles.actionLabel, { color: theme.text }]}>SWAP</Text>
+        </View>
+        
+        <View style={styles.actionItem}>
+          <CiblButton 
+            variant="outline" 
+            style={styles.roundBtn} 
+            onPress={() => navigateTo('NFTs')} // اتصال به صفحه NFTها
+            title={<CiBLIcon name="Layers" size={24} color={theme.primary} />}
+          />
+          <Text style={[styles.actionLabel, { color: theme.text }]}>COLLECTIBLES</Text>
+        </View>
+
+        <View style={styles.actionItem}>
+          <CiblButton 
+            variant="outline" 
+            style={styles.roundBtn} 
+            onPress={() => navigateTo('Network')} // اتصال به تنظیمات شبکه
+            title={<CiBLIcon name="Globe" size={24} color={theme.primary} />}
+          />
+          <Text style={[styles.actionLabel, { color: theme.text }]}>NETWORK</Text>
+        </View>
+      </View>
+
+      {/* بخش امنیت (برای کلمات بازیابی) */}
+      <CiblButton 
+        title="SECURITY VAULT" 
+        variant="outline"
+        onPress={() => navigateTo('SeedPhrase')} 
+      />
+      
+      {/* ... ادامه کدها */}
+    </View>
+  );
+};
