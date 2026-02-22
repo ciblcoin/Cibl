@@ -92,3 +92,26 @@ const styles = StyleSheet.create({
 });
 
 export default CiblTabBar;
+
+
+// در BottomTabNavigator آیکون‌ها را ست می‌کنیم
+<Tab.Navigator
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ color, size }) => {
+      let iconName;
+      if (route.name === 'Home') iconName = 'Home';
+      else if (route.name === 'Trending') iconName = 'TrendingUp';
+      else if (route.name === 'Trade') iconName = 'Repeat';
+      else if (route.name === 'Rewards') iconName = 'Gift';
+      else if (route.name === 'Discover') iconName = 'Compass';
+
+      return <CiBLIcon name={iconName} size={size} color={color} />;
+    },
+  })}
+>
+  <Tab.Screen name="Home" component={Dashboard} />
+  <Tab.Screen name="Trending" component={TrendingScreen} />
+  <Tab.Screen name="Trade" component={SwapScreen} />
+  <Tab.Screen name="Rewards" component={RewardsScreen} />
+  <Tab.Screen name="Discover" component={DiscoverScreen} />
+</Tab.Navigator>
