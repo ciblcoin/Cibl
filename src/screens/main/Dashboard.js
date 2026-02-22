@@ -186,3 +186,55 @@ const Dashboard = ({ navigation }) => {
     </View>
   );
 };
+
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingTop: 50,
+    paddingBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#222', // خط بسیار نازک زیر هدر مشابه فانتوم
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  walletInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pixelLogo: {
+    width: 35,
+    height: 35,
+    borderRadius: 10,
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pixelText: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#000',
+  },
+  walletName: {
+    fontFamily: 'Orbitron-Bold',
+    fontSize: 14,
+  },
+  walletAddress: {
+    fontFamily: 'Courier',
+    fontSize: 10,
+    marginTop: -2,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIconBtn: {
+    marginLeft: 18,
+    padding: 5,
+  }
+});
