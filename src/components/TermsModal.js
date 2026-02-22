@@ -56,3 +56,61 @@ const styles = StyleSheet.create({
 });
 
 export default TermsModal;
+
+import React, { useState } from 'react';
+import { Modal, View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import CiblButton from './CiblButton';
+import Checkbox from 'expo-checkbox'; // نیاز به نصب دارد: npx expo install expo-checkbox
+
+const TermsModal = ({ visible, onAccept, onClose }) => {
+  const { theme } = useTheme();
+  const [isChecked, setChecked] = useState(false);
+
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <View style={styles.centeredView}>
+        <View style={[styles.modalView, { backgroundColor: theme.card, borderColor: theme.primary }]}>
+          <Text style={[styles.modalTitle, { color: theme.primary }]}>TERMS_OF_SERVICE</Text>
+          
+          <ScrollView style={styles.termsBox}>
+            <Text style={[styles.termsText, { color: theme.textMuted }]}>
+              1. CiBL is a non-custodial wallet. Your keys, your crypto.{"\n"}
+              2. Lost seed phrases cannot be recovered by the system.{"\n"}
+              3. You agree to take full responsibility for your assets.
+            </Text>
+          </ScrollView>
+
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              style={styles.checkbox}
+              value={isChecked}
+              onValueChange={setChecked}
+              color={isChecked ? theme.primary : undefined}
+            />
+            <Text style={[styles.checkboxLabel, { color: theme.text }]}>I UNDERSTAND AND AGREE</Text>
+          </View>
+
+          <CiblButton 
+            title="PROCEED" 
+            disabled={!isChecked} 
+            onPress={onAccept}
+          />
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  centeredView: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.8)' },
+  modalView: { width: '85%', borderRadius: 20, padding: 25, borderWidth: 1 },
+  modalTitle: { fontFamily: 'Orbitron-Bold', marginBottom: 15 },
+  termsBox: { height: 150, marginBottom: 20 },
+  termsText: { fontFamily: 'Courier', fontSize: 12, lineHeight: 18 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 25 },
+  checkbox: { marginRight: 10 },
+  checkboxLabel: { fontFamily: 'Orbitron-Bold', fontSize: 10 }
+});
+
+export default TermsModal;
