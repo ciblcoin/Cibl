@@ -28,3 +28,30 @@ export const BlockchainService = {
     });
   }
 };
+
+export const BlockchainService = {
+  fetchWithTimeout: async (url, options, timeout = 5000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+      if (!response.ok) throw new Error(`HTTP_STATUS_${response.status}`);
+      return await response.json();
+    } catch (err) {
+      if (err.name === 'AbortError') throw new Error('REQUEST_TIMEOUT');
+      throw err;
+    }
+  },
+
+  getPrices: async () => {
+    try {
+      return await BlockchainService.fetchWithTimeout(COINGECKO_URL);
+    } catch (error) {
+      // ثبت خطا برای دیباگ
+      console.warn("Network Fail:", error.message);
+      throw error; // خطا را به UI پاس می‌دهیم
+    }
+  }
+};
