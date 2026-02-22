@@ -93,3 +93,10 @@ const DrawerNavigator = () => {
     </Drawer.Navigator>
   );
 };
+
+<Drawer.Navigator 
+  drawerContent={(props) => <DrawerContent {...props} />}
+  screenOptions={{ drawerPosition: 'right', headerShown: false }}
+>
+  <Drawer.Screen name="Dashboard" component={Dashboard} />
+</Drawer.Navigator>
