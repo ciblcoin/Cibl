@@ -1,38 +1,23 @@
-# src: .gitignore
-
-# Dependencies
+/nbproject/
+/.idea/*
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
 node_modules/
-.expo/
-dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-
-# API Keys and Secrets
-.env
-.env.local
-.env.production
-
-# Environment Variables (CRITICAL: Never upload these!)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Expo/React Native files
-.expo-shared/
-web-build/
-
-# iOS/Android specific
-ios/main.jsbundle
-ios/.xcode.env.local
-android/app/build
-android/.gradle
-*.apk
-*.ipa
-
-# System files
-.DS_Store
-Thumbs.db
+vendor/
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.egg-info/
+.tox/
+.bundle/
+Pods/
+.gradle/
+.terraform/
+bower_components/
+.cache/
+coverage/
